@@ -26,10 +26,13 @@ describe('GroupAddress', function () {
 
         describe('on main/sublevel addresses', function () {
              
-            it('turns a string into two octets', function() {
+            it('turns a string into two bytes', function() {
                 var ga = new GroupAddress('1/2/3', "1.001");
                 
-                assert.deepEqual(ga.parseAddress("4/13"), 0x040D);
+                assert.deepEqual(ga.parseAddress("4/13"), [0x20, 0x0D]);
+                assert.deepEqual(ga.parseAddress("15/1365"), [0x7d, 0x55]);
+                assert.deepEqual(ga.parseAddress("7/0"), [0x38, 0x00]);
+                assert.deepEqual(ga.parseAddress("0/0"), [0x00, 0x00]);
             });
             
             it('throws error if sublevel is to high', function() {
@@ -53,7 +56,10 @@ describe('GroupAddress', function () {
             it('turns a string into two octets', function() {
                 var ga = new GroupAddress('1/2/3', "1.001");
                 
-                assert.deepEqual(ga.parseAddress("4/2/155"), 0x229b);
+                assert.deepEqual(ga.parseAddress("4/2/155"),  [0x22, 0x9b]);
+                assert.deepEqual(ga.parseAddress("11/6/241"), [0x5e, 0xf1]);
+                assert.deepEqual(ga.parseAddress("1/0/0"),    [0x08, 0x00]);
+                assert.deepEqual(ga.parseAddress("0/0/0"),    [0x00, 0x00]);
             });
             
             it('throws error if sublevel is to high', function() {
