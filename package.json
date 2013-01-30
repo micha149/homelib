@@ -1,0 +1,12 @@
+{
+    "name": "homelib",
+    "version": "0.1.0",
+    "author": "Michael van Engelshoven <michael@van-engelshoven.de>",
+    "description": "A home automation framework for knx/eib",
+    "contributors": [],
+    "dependencies": {
+    },
+    "devDependencies": {
+        "sinon": "*"
+    }
+}
