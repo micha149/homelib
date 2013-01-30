@@ -6,7 +6,11 @@
     "contributors": [],
     "dependencies": {
     },
+    "scripts": {
+        "test": "node_modules/.bin/mocha -R list"
+    },
     "devDependencies": {
-        "sinon": "*"
+        "sinon": "*",
+        "mocha": "*"
     }
 }
