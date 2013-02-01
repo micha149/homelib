@@ -12,7 +12,7 @@ test-unit:
 		$(MOCHA_OPTS)
 
 test-cov: lib-cov
-	@EXPRESS_COV=1 $(MAKE) test REPORTER=html-cov > coverage.html
+	@COVERAGE=1 $(MAKE) test REPORTER=html-cov > coverage.html
 
 lib-cov: clean
 	./node_modules/visionmedia-jscoverage/jscoverage \

@@ -1,6 +1,6 @@
-var assert = require("assert"),
-    sinon  = require("sinon"),
-    Datapoint = require('../src-cov/Datapoint');
+var assert    = require("assert"),
+    sinon     = require("sinon"),
+    Datapoint = require('../homelib').Datapoint;
 
 describe('Datapoint', function() {
 

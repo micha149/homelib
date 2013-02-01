@@ -1,7 +1,8 @@
-var assert = require("assert"),
-    sinon  = require("sinon"),
-    GroupAddress = require('../src/GroupAddress'),
-    Datapoint    = require('../src/Datapoint');
+var assert  = require("assert"),
+    sinon   = require("sinon"),
+    homelib = require('../homelib'),
+    GroupAddress = homelib.GroupAddress,
+    Datapoint    = homelib.Datapoint;
 
 describe('GroupAddress', function () {
 
