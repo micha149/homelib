@@ -12,6 +12,7 @@
     "main": "./homelib.js",
     "devDependencies": {
         "sinon": "*",
-        "mocha": "*"
+        "mocha": "*",
+        "visionmedia-jscoverage": "*"
     }
 }
