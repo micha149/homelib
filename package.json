@@ -5,6 +5,7 @@
     "description": "A home automation framework for knx/eib",
     "contributors": [],
     "dependencies": {
+        "underscore": "1.4.x"
     },
     "scripts": {
         "test": "node_modules/.bin/mocha -R list"
