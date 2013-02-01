@@ -15,8 +15,8 @@ var GroupAddress = function(address, type, title) {
     
     this.address = address;
     this.type    = type;
-    this.title   = title || null;
-};
+    this.title   = title || "";
+}
 
 /**
  *            +-----------------------+-----------------------+

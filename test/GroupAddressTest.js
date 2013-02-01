@@ -1,6 +1,7 @@
 var assert = require("assert"),
     sinon  = require("sinon"),
-    GroupAddress = require('../src/GroupAddress');
+    GroupAddress = require('../src/GroupAddress'),
+    Datapoint    = require('../src/Datapoint');
 
 describe('GroupAddress', function () {
 
@@ -14,7 +15,7 @@ describe('GroupAddress', function () {
         
         it('stores optional title', function () {
             var ga = new GroupAddress("1/2/3", '1.001');
-            assert.strictEqual(ga.title, null);
+            assert.strictEqual(ga.title, "");
             
             ga = new GroupAddress("1/2/3", '1.001', 'Living Room, Ambient Light');
             assert.strictEqual(ga.title, 'Living Room, Ambient Light');
