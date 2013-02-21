@@ -55,4 +55,25 @@ describe('Datapoint', function() {
         })
     });
     
+    describe('.parse()', function() {
+        it('returns given value by default', function() {
+            var dpt = new Datapoint();
+            assert.strictEqual(dpt.parse(1), 1);
+            assert.strictEqual(dpt.parse(0), 0);
+            assert.strictEqual(dpt.parse(true), true);
+        });
+
+        it('can be overloaded', function() {
+            var spy = sinon.spy(),
+                dpt = new Datapoint({
+                    'id': '1.0001',
+                    'name': 'DPT_Bool',
+                    'parse': spy
+                });
+                
+            dpt.parse(4711)
+            assert.ok(spy.called);
+        });
+    });
+    
 });

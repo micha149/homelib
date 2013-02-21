@@ -3,6 +3,9 @@ var _ = require('underscore');
 var defaults = {
     validate: function (value) {
         return true;
+    },
+    parse: function (value) {
+        return value;
     }
 };
 
