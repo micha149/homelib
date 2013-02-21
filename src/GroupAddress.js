@@ -52,4 +52,8 @@ GroupAddress.prototype.parseAddress = function (str) {
     throw new Error(str + " is not a valid group address.");
 }
 
+GroupAddress.prototype.getRaw = function() {
+    return this.address;
+}
+
 module.exports = GroupAddress;
