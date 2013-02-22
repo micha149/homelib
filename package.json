@@ -8,7 +8,7 @@
         "underscore": "1.4.x"
     },
     "scripts": {
-        "test": "node_modules/.bin/mocha -R spec"
+        "test": "node_modules/.bin/mocha -R list"
     },
     "main": "./homelib.js",
     "devDependencies": {
