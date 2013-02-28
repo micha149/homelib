@@ -43,6 +43,19 @@ Message.prototype.setCommand = function(command) {
 }
 
 /**
+ * Returns the configured message command
+ *
+ * @returns {string} command
+ */
+Message.prototype.getCommand = function() {
+    switch (this._command) {
+        case 0: return "read";
+        case 2: return "write";
+        case 1: return "answer";
+    }
+}
+
+/**
  * Set the priority of this message.
  *
  * @param     {"system"|"alarm"|"high"|"normal"} priority Priority name

@@ -77,6 +77,21 @@ describe('Message', function() {
         });
     });
     
+    describe('.getCommand()', function() {
+    
+        it('returns right command', function() {
+            var msg = new Message();
+            
+            msg.setCommand('read');
+            assert.equal(msg.getCommand(), "read");
+            msg.setCommand('answer');
+            assert.equal(msg.getCommand(), "answer");
+            msg.setCommand('write');
+            assert.equal(msg.getCommand(), "write");
+        })
+        
+    });
+    
     describe('.setDestination()', function() {
         
         it('accepts instances of GroupAddress', function() {
