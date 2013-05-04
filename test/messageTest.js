@@ -114,6 +114,18 @@ describe('Message', function() {
         });
         
     });
+
+    describe('.getDestination()', function() {
+        it ('returns destination address of message', function() {
+            var msg = new Message(),
+                dpt = new Datapoint(),
+                adr = new GroupAddress('1/2/3', dpt);
+
+            msg.setDestination(adr);
+
+            assert.equal(msg.getDestination(), adr);
+        });
+    });
     
     describe('.setOrigin()', function() {
         

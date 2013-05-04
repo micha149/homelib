@@ -109,6 +109,15 @@ Message.prototype.setDestination = function(address) {
 }
 
 /**
+ * Returns destination address of this message
+ *
+ * @returns {GroupAddress|PhysicalAddress}
+ */
+Message.prototype.getDestination = function() {
+    return this._destination;
+}
+
+/**
  * Sets the origin of this message
  *
  * @param     {PhysicalAddress} address Origin Address
