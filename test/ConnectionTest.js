@@ -1,6 +1,6 @@
 var sinon = require('sinon'),
     assert = require('assert'),
-    homelib = require('homelib'),
+    homelib = require('../homelib'),
     Connection = homelib.Connection,
     GroupAddress = homelib.GroupAddress,
     PhysicalAddress = homelib.PhysicalAddress,
