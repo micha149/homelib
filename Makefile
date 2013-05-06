@@ -1,13 +1,13 @@
 
 MOCHA_OPTS=
-REPORTER = list
+REPORTER = spec
 
 check: test
 
 test: test-unit
 
 test-unit:
-	@NODE_ENV=test ./node_modules/.bin/mocha \
+	@NODE_ENV=test find ./test -name '*Test.js' | xargs ./node_modules/.bin/mocha \
 		--reporter $(REPORTER) \
 		$(MOCHA_OPTS)
 
