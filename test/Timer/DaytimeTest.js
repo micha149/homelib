@@ -2,7 +2,7 @@ var Daytime = require('../../homelib').Timer.Daytime,
     assert  = require('assert'),
     sinon   = require('sinon');
 
-describe.only('Timer.Daytime', function() {
+describe('Timer.Daytime', function() {
 
     describe('constructor', function() {
 
