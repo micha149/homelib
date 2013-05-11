@@ -3,8 +3,10 @@ var path = process.env.COVERAGE
   : __dirname +  '/src/';
 
 module.exports = {
-    GroupAddress: require(path + 'GroupAddress.js'),
-    PhysicalAddress: require(path + 'PhysicalAddress.js'),
-    Datapoint: require(path + 'Datapoint.js'),
-    Message: require(path + 'Message.js')
+    GroupAddress: require(path + 'GroupAddress'),
+    PhysicalAddress: require(path + 'PhysicalAddress'),
+    Datapoint: require(path + 'Datapoint'),
+    Message: require(path + 'Message'),
+    Connection: require(path + 'Connection'),
+    Timer: require(path + 'Timer')
 };
