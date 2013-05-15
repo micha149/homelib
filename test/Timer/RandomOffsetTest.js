@@ -14,7 +14,7 @@ describe('Timer.RandomOffset', function() {
            var time = sinon.createStubInstance(Daytime),
                rand = new RandomOffset(time);
 
-           assert.equal(rand.time, time, 'Time object stored');
+           assert.equal(rand._time, time, 'Time object stored');
 
            assert.throws(function() {
                rand = new RandomOffset('fooo');
@@ -25,11 +25,27 @@ describe('Timer.RandomOffset', function() {
            var time = sinon.createStubInstance(Daytime),
                rand = new RandomOffset(time);
 
-           assert.equal(rand.min, -9000, "Min should be -30m");
-           assert.ok(rand.min instanceof Duration, ".min is instance of Duration");
-           assert.equal(rand.max, 9000, "Max should be +30m");
-           assert.ok(rand.max instanceof Duration, ".max is instance of Duration");
+           assert.equal(rand._min, -9000, "Min should be -30m");
+           assert.ok(rand._min instanceof Duration, "._min is instance of Duration");
+           assert.equal(rand._max, 9000, "Max should be +30m");
+           assert.ok(rand._max instanceof Duration, "._max is instance of Duration");
        });
+
+       it('can be instanciated with config object', function() {
+
+           var time = sinon.createStubInstance(Daytime),
+               rand;
+
+           rand = new RandomOffset({
+               time: time,
+               min: -8,
+               max: 15
+           });
+
+           assert.equal(rand._min, -8, "Min was set");
+           assert.equal(rand._min, -8, "Max was set");
+           assert.equal(rand._time, time, "Time object stored");
+       })
    });
 
    describe('setMin', function() {
@@ -40,8 +56,8 @@ describe('Timer.RandomOffset', function() {
 
            rand.setMin(12345);
 
-           assert.equal(rand.min, 12345);
-           assert.ok(rand.min instanceof Duration, ".min is instance of Duration");
+           assert.equal(rand._min, 12345);
+           assert.ok(rand._min instanceof Duration, "._min is instance of Duration");
        });
 
        it('accepts duration object', function() {
@@ -51,8 +67,8 @@ describe('Timer.RandomOffset', function() {
 
            rand.setMin(dur);
 
-           assert.equal(rand.min, 149000);
-           assert.ok(rand.min instanceof Duration, ".min is instance of Duration");
+           assert.equal(rand._min, 149000);
+           assert.ok(rand._min instanceof Duration, "._min is instance of Duration");
        });
 
        it('accepts duration string', function() {
@@ -61,8 +77,8 @@ describe('Timer.RandomOffset', function() {
 
            rand.setMin('2m 29s');
 
-           assert.equal(rand.min, 149000);
-           assert.ok(rand.min instanceof Duration, ".min is instance of Duration");
+           assert.equal(rand._min, 149000);
+           assert.ok(rand._min instanceof Duration, "._min is instance of Duration");
        });
    });
 
@@ -74,8 +90,8 @@ describe('Timer.RandomOffset', function() {
 
             rand.setMax(12345);
 
-            assert.equal(rand.max, 12345);
-            assert.ok(rand.max instanceof Duration, ".max is instance of Duration");
+            assert.equal(rand._max, 12345);
+            assert.ok(rand._max instanceof Duration, "._max is instance of Duration");
         });
 
         it('accepts duration object', function() {
@@ -85,8 +101,8 @@ describe('Timer.RandomOffset', function() {
 
             rand.setMax(dur);
 
-            assert.equal(rand.max, 149000);
-            assert.ok(rand.max instanceof Duration, ".max is instance of Duration");
+            assert.equal(rand._max, 149000);
+            assert.ok(rand._max instanceof Duration, "._max is instance of Duration");
         });
 
         it('accepts duration string', function() {
@@ -95,8 +111,8 @@ describe('Timer.RandomOffset', function() {
 
             rand.setMax('2m 29s');
 
-            assert.equal(rand.max, 149000);
-            assert.ok(rand.max instanceof Duration, ".max is instance of Duration");
+            assert.equal(rand._max, 149000);
+            assert.ok(rand._max instanceof Duration, "._max is instance of Duration");
         });
     });
 
