@@ -32,25 +32,34 @@ describe('Timer.Duration', function() {
 
     });
 
+    var testCases = {
+        '30s': 30000,
+        '2m': 120000,
+        '3h': 10800000,
+        '2d': 172800000,
+        '4w': 2419200000,
+        '5m 30s': 330000,
+        '1w 2d': 777600000,
+        '-2h': -7200000
+    };
+
     describe('parses string to number of milliseconds', function() {
 
-        var testCases = {
-            '30s': 30000,
-            '2m': 120000,
-            '3h': 10800000,
-            '2d': 172800000,
-            '4w': 2419200000,
-            '5m 30s': 330000,
-            '1w 2d': 777600000,
-            '-2h': -7200000
-        };
-
         each(testCases, function(int, str) {
-            it(str, function() {
+            it(str + " => " + int, function() {
                 assert.equal(new Duration(str), int);
             })
         });
 
+    })
+
+    describe('can be casted to a readable string', function() {
+
+        each(testCases, function(int, str) {
+            it(int + " => " + str, function() {
+                assert.equal(new Duration(int).toString(), str);
+            })
+        });
     })
 
 });

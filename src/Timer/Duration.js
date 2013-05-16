@@ -34,4 +34,26 @@ Duration.prototype.valueOf = function() {
 }
 
 
+Duration.prototype.toString = function() {
+    var rest = Math.abs(this.duration),
+        str = this.duration < 0 ? "-" : "";
+
+    var defs = {
+        "w": 604800000,
+        "d": 86400000,
+        "h": 3600000,
+        "m": 60000,
+        "s": 1000
+    };
+
+    for (key in defs) {
+        if (rest >= defs[key]) {
+            str += Math.floor(rest / defs[key]) + key + " ";
+            rest = rest % defs[key];
+        }
+    }
+
+    return str.trim();
+}
+
 module.exports = Duration;
