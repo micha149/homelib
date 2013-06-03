@@ -8,5 +8,7 @@ module.exports = {
     Datapoint: require(path + 'Datapoint'),
     Message: require(path + 'Message'),
     Connection: require(path + 'Connection'),
-    Timer: require(path + 'Timer')
+    Timer: require(path + 'Timer'),
+    Cemi: require(path + 'Cemi'),
+    assert: require(path + "assert")
 };
