@@ -1,5 +1,6 @@
-var Duration = require('../../homelib').Timer.Duration,
-    UnexpectedValueError = require('../../src/Error/UnexpectedValueError')
+var homelib = require('../../homelib'),
+    Duration = homelib.Timer.Duration,
+    UnexpectedValueError = homelib.Error.UnexpectedValueError,
     assert  = require('assert'),
     sinon   = require('sinon')
     each    = require('underscore').each;

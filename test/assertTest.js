@@ -1,5 +1,5 @@
 var assert = require('assert'),
-    myAssert = require('../src/assert.js'),
+    myAssert = require('../homelib').assert,
     implements = myAssert.implements;
 
 describe('assert', function() {

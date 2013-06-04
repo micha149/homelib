@@ -2,7 +2,7 @@ var homelib = require('../../homelib'),
     Daytime = homelib.Timer.Daytime,
     RandomOffset = homelib.Timer.RandomOffset,
     Duration = homelib.Timer.Duration,
-    UnexpectedValueError = require('../../src/Error/UnexpectedValueError'),
+    UnexpectedValueError = homelib.Error.UnexpectedValueError,
     assert  = require('assert'),
     sinon   = require('sinon');
 
