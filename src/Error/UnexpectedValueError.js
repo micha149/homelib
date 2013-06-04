@@ -1,8 +1,8 @@
 var util = require('util');
 
-UnexpectedValueError = function(msg, constr) {
-    Error.captureStackTrace(this, constr || this)
-    this.message = msg || 'Error'
+function UnexpectedValueError (msg, constr) {
+    Error.captureStackTrace(this, constr || this);
+    this.message = msg || 'Error';
 }
 
 util.inherits(UnexpectedValueError, Error);

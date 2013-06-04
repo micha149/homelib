@@ -1,8 +1,8 @@
 var util = require('util');
 
-ImplementationError = function(msg, constr) {
-    Error.captureStackTrace(this, constr || this)
-    this.message = msg || 'Error'
+function ImplementationError (msg, constr) {
+    Error.captureStackTrace(this, constr || this);
+    this.message = msg || 'Error';
 }
 
 util.inherits(ImplementationError, Error);
