@@ -11,6 +11,5 @@ module.exports = {
     Message: require(path + 'Message'),
     Connection: require(path + 'Connection'),
     Timer: require(path + 'Timer'),
-    Cemi: require(path + 'Cemi'),
     assert: require(path + "assert")
 };
