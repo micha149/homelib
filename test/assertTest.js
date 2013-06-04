@@ -58,22 +58,6 @@ describe('assert', function() {
 
         });
 
-        it('throws error if a method has the wrong parameter count', function() {
-
-            var object = {
-                methodOne: function() {},
-                methodTwo: function (paramA) {},
-                propOne: "A string",
-                propTwo: 123,
-                propThree: false
-            };
-
-            assert.throws(function() {
-                implements(object, interface);
-            }, /methodTwo/);
-
-        });
-
     });
 
 })
