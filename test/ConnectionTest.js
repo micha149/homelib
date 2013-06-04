@@ -5,7 +5,7 @@ var sinon = require('sinon'),
     GroupAddress = homelib.GroupAddress,
     PhysicalAddress = homelib.PhysicalAddress,
     Message = homelib.Message,
-    Driver = homelib.Driver.Driver;
+    Driver = homelib.Driver.DriverInterface;
 
 describe('Connection', function() {
 

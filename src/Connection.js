@@ -1,11 +1,10 @@
-var Driver = require('./Driver/Driver'),
-    invoke = require('underscore').invoke;
+var Driver = require('./Driver/DriverInterface'),
+    invoke = require('underscore').invoke,
+    assert = require('./assert');
 
 function Connection(driver) {
 
-    if (!(driver instanceof Driver)) {
-        throw new Error('Expected driver instance as constructor argument');
-    }
+    assert.implements(driver, Driver);
 
     driver.on('message', this._onDriverMessage.bind(this));
 
