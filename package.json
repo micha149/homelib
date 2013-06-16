@@ -4,16 +4,24 @@
     "author": "Michael van Engelshoven <michael@van-engelshoven.de>",
     "description": "A home automation framework for knx/eib",
     "contributors": [],
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/micha149/homelib.git"
+    },
     "dependencies": {
         "underscore": "1.4.x"
     },
-    "scripts": {
-        "test": "node_modules/.bin/mocha -R list"
-    },
-    "main": "./homelib.js",
     "devDependencies": {
         "sinon": ">=1.6.0",
         "mocha": "*",
         "visionmedia-jscoverage": "*"
+    },
+    "main": "./homelib.js",
+    "scripts": {
+        "test": "node_modules/.bin/mocha -R list"
+    },
+    "license": "MIT",
+    "engines": {
+        "node": ">=0.9.2"
     }
 }
