@@ -65,7 +65,7 @@ function Packet(serviceType, data) {
  */
 Packet.prototype.toBuffer = function() {
     var i,
-        data = this._data,
+        data = this.getData(),
         serviceType = this._serviceType,
         totalLength = 6 + data.length,
         buffer = new Buffer(totalLength);

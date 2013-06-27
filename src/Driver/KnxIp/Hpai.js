@@ -27,19 +27,21 @@ Hpai.prototype._assertAddress = function (address) {
 }
 
 Hpai.prototype.toBuffer = function() {
-    var buf = new Buffer(8),
-        adr = this.address.split(".");
-
-    buf[0] = 0x08;
-    buf[1] = this.protocol === "udp" ? 0x01 : 0x00;
-    buf[2] = parseInt(adr[0], 10);
-    buf[3] = parseInt(adr[1], 10);
-    buf[4] = parseInt(adr[2], 10);
-    buf[5] = parseInt(adr[3], 10);
-    buf[6] = (this.port & 0xff00) >> 8;
-    buf[7] = (this.port & 0xff);
-
+    var buf = new Buffer(this.toArray());
     return buf;
 }
 
+Hpai.prototype.toArray = function() {
+    var adr = this.address.split(".")
+    return [
+        0x08,
+        this.protocol === "udp" ? 0x01 : 0x00,
+        parseInt(adr[0], 10),
+        parseInt(adr[1], 10),
+        parseInt(adr[2], 10),
+        parseInt(adr[3], 10),
+        (this.port & 0xff00) >> 8,
+        (this.port & 0xff)
+    ];
+}
 module.exports = Hpai;

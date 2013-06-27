@@ -1,33 +1,45 @@
-var Buffer = require('buffer').Buffer;
+var util = require('util'),
+    Packet = require('./Packet.js'),
+    Buffer = require('buffer').Buffer;
 
+/**
+ * A connection request is a knx ip packet which is sent to the ip interface
+ * for initializing a connection between the interface and the client. It contains
+ * the data and connection endpoint on which the ip interface will send further
+ * packages. The interface should respond to the request with a
+ * {@link Driver.KnxIp.ConnectionResponse ConnectionResponse}.
+ *
+ * @class Driver.KnxIp.ConnectionRequest
+ * @extend Driver.KnxIp.Packet
+ * @constructor
+ * @param {Driver.KnxIp.Hpai} client Connection endpoint
+ * @param {Driver.KnxIp.Hpai} server Data endpoint
+ */
 function ConnectionRequest(client, server) {
-    this.client = client;
-    this.server = server;
+    this._client = client;
+    this._server = server;
 
-    this.data = [
+    this._data = [
         4, // data length
         0x04, // Tunnel connection
         0x02, // Link layer
         0x00 // reserved
     ];
-
+    this._serviceType = 0x0205;
 }
+util.inherits(ConnectionRequest, Packet);
 
-ConnectionRequest.prototype.toBuffer = function() {
-    var header = new Buffer(6),
-        client = this.client.toBuffer(),
-        server = this.server.toBuffer(),
-        data   = new Buffer(this.data),
-        totalLength = header.length + client.length + server.length + data.length;
+/**
+ * Returns packet data bytes
+ *
+ * @returns {Array}
+ */
+ConnectionRequest.prototype.getData = function() {
+    var client = this._client.toArray(),
+        server = this._server.toArray(),
+        data = this._data;
 
-    header[0] = 0x06; // header length
-    header[1] = 0x10; // protocol version (1.0)
-    header[2] = 0x02; // Connect request high byte
-    header[3] = 0x05; // Connect request low byte
-    header[4] = (totalLength & 0xff00) >> 8;
-    header[5] = totalLength & 0xff;
-
-    return Buffer.concat([header, client, server, data], totalLength);
+    return client.concat(server, data);
 }
 
 module.exports = ConnectionRequest;
