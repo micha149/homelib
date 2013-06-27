@@ -17,6 +17,19 @@ describe('Packet', function() {
             assert.equal(packet._data, expectedData, "Data stored");
         });
 
+        it('translates a given string to service type', function() {
+            var expectedServiceType = 0x0420,
+                serviceName = "tunneling.request",
+                packet = new KnxIp.Packet(serviceName);
+
+            assert.equal(packet.getServiceType(), expectedServiceType);
+        });
+
+        it('trows exception on unknown service name', function() {
+            assert.throws(function() {
+                var packet = new KnxIp.Packet('stupid.string');
+            });
+        });
     });
 
     describe('toBuffer()', function() {

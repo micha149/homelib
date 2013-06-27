@@ -45,6 +45,14 @@ function toHex(n) {
  * @constructor
  */
 function Packet(serviceType, data) {
+
+    if (typeof serviceType === 'string') {
+        if (!serviceNameToType[serviceType]) {
+            throw new UnexpectedValueError('Unknown service name \'' + serviceType + '\'');
+        }
+        serviceType = serviceNameToType[serviceType];
+    }
+
     this._serviceType = serviceType & 0xffff;
     this._data = data || [];
 }
