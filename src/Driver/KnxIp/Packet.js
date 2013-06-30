@@ -36,9 +36,11 @@ function toHex(n) {
  * to an udp socket. The packet has a 6 byte header which contains the
  * given service type. The given data bytes follow after the header.
  *
+ * {@img knx_ip_packet.png Schema of a knx ip packet}
+ *
  * @class Driver.KnxIp.Packet
  *
- * @param {Number} serviceType Two byte service type identifier
+ * @param {Number|String} serviceType Two byte service type identifier or service name as string
  * @param {Array} data Array with packet data
  * @constructor
  */
@@ -50,6 +52,7 @@ function Packet(serviceType, data) {
 /**
  * Returns a new buffer instance which represents this knx ip packet.
  *
+ * @method toBuffer
  * @returns {buffer.Buffer}
  */
 Packet.prototype.toBuffer = function() {
@@ -78,6 +81,7 @@ Packet.prototype.toBuffer = function() {
  * automatically called when a packet instance is passed to console
  * methods.
  *
+ * @method inspect
  * @returns {String}
  */
 Packet.prototype.inspect = function() {
@@ -94,6 +98,7 @@ Packet.prototype.inspect = function() {
 /**
  * Returns service type value
  *
+ * @method getServiceType
  * @returns {Number}
  */
 Packet.prototype.getServiceType = function() {
@@ -103,6 +108,7 @@ Packet.prototype.getServiceType = function() {
 /**
  * Returns a human readable version of the service type.
  *
+ * @method getServiceName
  * @return {String}
  */
 Packet.prototype.getServiceName = function() {
@@ -122,19 +128,22 @@ Packet.prototype.getServiceName = function() {
 /**
  * Returns packet data
  *
- * @returns {Array}
+ * @method getData
+ * @returns {Array} Array of bytes
  */
 Packet.prototype.getData = function() {
     return this._data;
 }
 
 /**
- * Class method to parse an array of buffer into an package object. If the
+ * Static method to parse an array of buffer into an package object. If the
  * given data does not correspond to the specification an exception will be
  * thrown.
  *
+ * @method parse
  * @param {Array|buffer.Buffer} raw Data to parse
  * @returns Driver.KnxIp.Packet
+ * @static
  */
 Packet.parse = function(raw) {
     if (raw instanceof Buffer) {

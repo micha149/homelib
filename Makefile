@@ -22,4 +22,7 @@ clean:
 	rm -f coverage.html
 	rm -fr src-cov
 
+doc:
+	jsduck --config=docs/config.json
+
 .PHONY: test test-unit clean

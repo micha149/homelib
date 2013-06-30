@@ -1,0 +1,51 @@
+[
+    {
+        "name": "Bus Communication",
+        "groups": [
+            {
+                "name": "General",
+                "classes": [
+                    "Connection",
+                    "Message",
+                    "GroupAddress",
+                    "PhysicalAddress",
+                    "Datapoint"
+                ]
+            },
+            {
+                "name": "KnxNet/Ip Driver",
+                "classes": [
+                    "Driver.KnxIpDriver",
+                    "Driver.KnxIp.*"
+                ]
+            },
+            {
+                "name": "Knx USB Driver",
+                "classes": [
+                ]
+            }
+        ]
+    },
+    {
+        "name": "Logic components",
+        "groups": [
+            {
+                "name": "Time logics",
+                "classes": [
+                    "Timer.*"
+                ]
+            }
+        ]
+    },
+    {
+        "name": "Utilities",
+        "groups": [
+            {
+                "name": "Logging",
+                "classes": [
+                    "Log.*"
+                ]
+            }
+        ]
+    }
+]
