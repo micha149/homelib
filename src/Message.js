@@ -244,4 +244,13 @@ Message.prototype.getRaw = function() {
     return raw;
 }
 
+/**
+ * Parses a given buffer into a message instance
+ *
+ * @param {buffer.Buffer} buffer
+ * @return {Message}
+ * @static
+ */
+Message.parse = function() {}
+
 module.exports = Message;

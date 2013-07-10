@@ -1,4 +1,5 @@
 var Packet = require('./Packet.js'),
+    Message = require('../../Message.js'),
     util   = require('util');
 
 /**
@@ -41,6 +42,11 @@ TunnelingRequest.prototype.getSequence = function() {
 
 TunnelingRequest.prototype.getMessage = function() {
     return this._message;
+}
+
+TunnelingRequest.parse = function(buffer) {
+    var msg = Message.parse(buffer.slice(9));
+    return new TunnelingRequest(buffer[7], buffer[8], msg);
 }
 
 module.exports = TunnelingRequest;

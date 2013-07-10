@@ -44,3 +44,15 @@ describe("TunnelingAck", function() {
     });
 
 });
+
+describe("TunnelingAck.parse", function() {
+    it('returns TunnelingAck instance for given buffer', function() {
+        var channelId = 94,
+            sequence = 211,
+            status = 0x02,
+            buffer = new Buffer([0x06, 0x10, 0x04, 0x21, 0x00, 0x0a, 0x04, channelId, sequence, status]),
+            expected = new KnxIp.TunnelingAck(channelId, sequence, status);
+
+        assert.deepEqual(KnxIp.TunnelingAck.parse(buffer), expected);
+    });
+});

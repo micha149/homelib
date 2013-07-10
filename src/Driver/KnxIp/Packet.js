@@ -173,4 +173,24 @@ Packet.parse = function(raw) {
     return new Packet((raw[2] << 8 | raw[3]), raw.slice(6));
 }
 
+/**
+ * Turns a received buffer into the equivalent object representation.
+ *
+ * @method factory
+ * @param {buffer.Buffer} buffer Received datagram buffer
+ * @returns {Driver.KnxIp.Packet}
+ * @static
+ */
+Packet.factory = function(buffer) {
+
+    var serviceType = buffer[2] << 8 | buffer[3];
+
+    switch(serviceType) {
+        case 0x0420:
+            return require('./TunnelingRequest.js').parse(buffer);
+        case 0x0421:
+            return require('./TunnelingAck.js').parse(buffer);
+    }
+}
+
 module.exports = Packet;

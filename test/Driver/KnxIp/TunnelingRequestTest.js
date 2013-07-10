@@ -1,6 +1,7 @@
 var assert = require('assert'),
     sinon  = require('sinon'),
     homelib = require('../../../homelib'),
+    Buffer = require('buffer').Buffer,
     KnxIp  = homelib.Driver.KnxIp,
     Message = homelib.Message;
 
@@ -81,4 +82,32 @@ describe("TunnelingRequest", function() {
         });
     });
 
+});
+
+describe("TunnelingRequest.parse", function() {
+
+
+    var sandbox;
+
+    beforeEach(function() {
+        sandbox = sinon.sandbox.create();
+    });
+
+    afterEach(function() {
+        sandbox.restore();
+    })
+
+    it('returns instance for given buffer', function() {
+        var message = new Message(),
+            channelId = 2,
+            sequence = 128,
+            buffer = new Buffer([0x06, 0x10, 0x04, 0x21, 0x00, 0x0a, 0x04, channelId, sequence, 0x01, 0x02, 0x03])
+            expected = new KnxIp.TunnelingRequest(channelId, sequence, message);
+
+        sandbox.stub(Message, 'parse').returns(message);
+
+        assert.deepEqual(KnxIp.TunnelingRequest.parse(buffer), expected);
+        assert.ok(Message.parse.calledOnce, "parse() on Message called");
+        assert.deepEqual(Message.parse.firstCall.args[0], new Buffer([1, 2, 3]));
+    });
 });

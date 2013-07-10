@@ -149,3 +149,37 @@ describe('Packet.parse()', function() {
         });
     });
 });
+
+describe('Packet.factory', function() {
+
+    var sandbox;
+
+    beforeEach(function() {
+        sandbox = sinon.sandbox.create();
+    });
+
+    afterEach(function() {
+        sandbox.restore();
+    })
+
+    it('calls TunnelingRequest\'s parse method on buffer with 0x0420', function() {
+        var stub = sandbox.stub(KnxIp.TunnelingRequest, "parse"),
+            buffer = new Buffer([0x06, 0x10, 0x04, 0x20, 0x01, 0x02, 0x03, 0x04]);
+
+        KnxIp.Packet.factory(buffer);
+
+        assert.ok(stub.calledOnce, "parse on TunnelingRequest called");
+        assert.ok(stub.calledWith(buffer), "passed buffer to parse method");
+    });
+
+    it('calls TunnelingAck\'s parse method on buffer with 0x0421', function() {
+        var stub = sandbox.stub(KnxIp.TunnelingAck, "parse"),
+            buffer = new Buffer([0x06, 0x10, 0x04, 0x21, 0x01, 0x02, 0x03, 0x04]);
+
+        KnxIp.Packet.factory(buffer);
+
+        assert.ok(stub.calledOnce, "parse on TunnelingRequest called");
+        assert.ok(stub.calledWith(buffer), "passed buffer to parse method");
+    });
+
+});

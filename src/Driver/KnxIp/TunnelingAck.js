@@ -21,4 +21,15 @@ function TunnelingAck(channelId, sequence, status) {
 }
 util.inherits(TunnelingAck, Packet);
 
+/**
+ * Parses a given buffer and returns a TunnelingAck instance
+ *
+ * @param {buffer.Buffer} buffer
+ * @returns {Driver.KnxIp.TunnelingAck}
+ */
+TunnelingAck.parse = function(buffer) {
+    console.info(buffer);
+    return new TunnelingAck(buffer[7], buffer[8], buffer[9]);
+}
+
 module.exports = TunnelingAck;
