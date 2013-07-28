@@ -150,7 +150,7 @@ Packet.prototype.getData = function() {
  *
  * @method parse
  * @param {Array|buffer.Buffer} raw Data to parse
- * @returns Driver.KnxIp.Packet
+ * @returns {Driver.KnxIp.Packet}
  * @static
  */
 Packet.parse = function(raw) {
