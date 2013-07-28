@@ -182,4 +182,14 @@ describe('Packet.factory', function() {
         assert.ok(stub.calledWith(buffer), "passed buffer to parse method");
     });
 
+    it('calls Packet\'s parse method on unknown service types', function() {
+        var stub = sandbox.stub(KnxIp.Packet, "parse"),
+            buffer = new Buffer([0x06, 0x10, 0x47, 0x11, 0x01, 0x02, 0x03, 0x04]);
+
+        KnxIp.Packet.factory(buffer);
+
+        assert.ok(stub.calledOnce, "parse on Packet called");
+        assert.ok(stub.calledWith(buffer), "passed buffer to parse method");
+    })
+
 });
