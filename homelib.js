@@ -8,6 +8,7 @@ module.exports = {
     Datapoint: require(path + 'Datapoint'),
     Driver: require(path + 'Driver'),
     Error:  require(path + 'Error'),
+    Log: require(path + 'Log'),
     Message: require(path + 'Message'),
     Connection: require(path + 'Connection'),
     Timer: require(path + 'Timer'),
