@@ -93,7 +93,8 @@ Packet.prototype.toBuffer = function() {
  * @returns {String}
  */
 Packet.prototype.inspect = function() {
-    var data = this._data,
+    var i,
+        data = this.getData(),
         out = [];
 
     for (i = 0; i < data.length; i++) {
