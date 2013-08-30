@@ -81,5 +81,10 @@ describe('GroupAddress', function () {
         });
         
     });
+
+    it('can be converted to string', function() {
+        var ga = new GroupAddress([0x22, 0x9b], "1.001"); // 4/2/155
+        assert.equal(ga.toString(), '4/2/155');
+    });
     
 });

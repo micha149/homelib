@@ -48,4 +48,18 @@ PhysicalAddress.prototype.parseAddress = function (str) {
     throw new Error(str + " is not a valid physical address.");
 }
 
+/**
+ * Returns a string representation like "1.4.34" for this address object.
+ *
+ * @returns {string}
+ */
+PhysicalAddress.prototype.toString = function() {
+    var bytes = this._address,
+        area = (bytes[0] & 240) >> 4,
+        line = (bytes[0] & 15),
+        member = bytes[1];
+
+    return [area, line, member].join('.');
+}
+
 module.exports = PhysicalAddress;

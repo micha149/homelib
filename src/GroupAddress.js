@@ -56,4 +56,18 @@ GroupAddress.prototype.getRaw = function() {
     return this.address;
 }
 
+/**
+ * Returns a string representation like "1/4/34" for this address object.
+ *
+ * @returns {string}
+ */
+GroupAddress.prototype.toString = function() {
+    var bytes = this.address,
+        main = (bytes[0] & 120) >> 3,
+        middle = (bytes[0] & 7),
+        sub = bytes[1];
+
+    return [main, middle, sub].join('/');
+}
+
 module.exports = GroupAddress;

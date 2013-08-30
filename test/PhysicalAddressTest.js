@@ -64,5 +64,10 @@ describe('PhysicalAddress', function () {
             });
         });
     });
+
+    it('can be converted to string representation', function() {
+        var addr = new PhysicalAddress("11.6.241");
+        assert.equal(addr.toString(), "11.6.241");
+    });
     
 });
