@@ -17,20 +17,23 @@ describe('Datapoint', function() {
             assert.equal(dpt.id, '1.0001');
             assert.equal(dpt.name, 'DPT_Bool');
         });
-    })
+    });
     
     describe('.get() on module exports', function() {
         it('is a function', function() {
             assert.equal(typeof Datapoint.get, "function");
-        })
+        });
+
         it('is not available on instances', function() {
             var dpt = new Datapoint();
             assert.ok(dpt.get !== Datapoint.get);
-        })
+        });
+
         it('resolves datapoint object by id', function() {
             var dpt = Datapoint.get('1.0001');
             assert.ok(dpt instanceof Datapoint);
         });
+
         it('throws an error on unknown ids');
     });
     
@@ -40,7 +43,7 @@ describe('Datapoint', function() {
             assert.ok(dpt.validate(1));
             assert.ok(dpt.validate(0));
             assert.ok(dpt.validate('foo'));
-        })
+        });
         
         it('can be overloaded', function() {
             var spy = sinon.spy(),
@@ -50,9 +53,9 @@ describe('Datapoint', function() {
                     'validate': spy
                 });
                 
-            dpt.validate(4711)
+            dpt.validate(4711);
             assert.ok(spy.called);
-        })
+        });
     });
     
     describe('.parse()', function() {
@@ -71,7 +74,7 @@ describe('Datapoint', function() {
                     'parse': spy
                 });
                 
-            dpt.parse(4711)
+            dpt.parse(4711);
             assert.ok(spy.called);
         });
     });

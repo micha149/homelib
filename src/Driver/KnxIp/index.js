@@ -4,4 +4,4 @@ module.exports = {
     TunnelingRequest: require("./TunnelingRequest.js"),
     Hpai: require('./Hpai.js'),
     Packet: require('./Packet.js')
-}
+};

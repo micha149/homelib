@@ -11,7 +11,7 @@ var defaults = {
 
 var Datapoint = function(options) {
     _.extend(this, defaults, options);
-}
+};
 
 
 module.exports = Datapoint;

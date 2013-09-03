@@ -76,6 +76,7 @@ function KnxIpDriver(options) {
 
     this.on('packet', this._onPacket.bind(this));
 }
+
 util.inherits(KnxIpDriver, events.EventEmitter);
 
 /**
@@ -214,7 +215,7 @@ KnxIpDriver.prototype._sendAndExpect = function(packet, expectedService, callbac
 
     this.on('packet', checkResponseAndKillTimeout);
     checkMaxAttempsAndResend();
-}
+};
 
 /**
  * Send the given buffer to the remote host
@@ -227,7 +228,7 @@ KnxIpDriver.prototype._socketSend = function(buffer) {
         options = this.options;
 
     socket.send(buffer, 0, buffer.length, options.remotePort, options.remoteAddress);
-}
+};
 
 /**
  * Executed if socket receives a message. This method will try to translate the message
@@ -266,7 +267,7 @@ KnxIpDriver.prototype._onPacket = function(packet) {
             this.emit('message', packet.getMessage());
         }
     }
-}
+};
 
 /**
  * Returns if the driver is connected to an ip interface or not.
@@ -284,6 +285,6 @@ KnxIpDriver.prototype.isConnected = function() {
  */
 KnxIpDriver.prototype.send = function(msg) {
 
-}
+};
 
 module.exports = KnxIpDriver;

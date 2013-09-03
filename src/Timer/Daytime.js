@@ -24,6 +24,6 @@ Daytime.prototype.getNextDate = function() {
     now.setSeconds(this.seconds);
 
     return now;
-}
+};
 
 module.exports = Daytime;

@@ -45,7 +45,7 @@ describe('Timer.RandomOffset', function() {
            assert.equal(rand._min, -8, "Min was set");
            assert.equal(rand._min, -8, "Max was set");
            assert.equal(rand._time, time, "Time object stored");
-       })
+       });
    });
 
    describe('setMin', function() {

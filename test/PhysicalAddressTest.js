@@ -6,7 +6,7 @@ describe('PhysicalAddress', function () {
 
     it("is a constructor", function() {
         assert.equal(typeof PhysicalAddress, "function");
-    })
+    });
     
     describe('constructor', function () {
         

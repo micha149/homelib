@@ -16,7 +16,7 @@ var GroupAddress = function(address, type, title) {
     this.address = address;
     this.type    = type;
     this.title   = title || "";
-}
+};
 
 /**
  *            +-----------------------+-----------------------+
@@ -50,11 +50,11 @@ GroupAddress.prototype.parseAddress = function (str) {
     }
     
     throw new Error(str + " is not a valid group address.");
-}
+};
 
 GroupAddress.prototype.getRaw = function() {
     return this.address;
-}
+};
 
 /**
  * Returns a string representation like "1/4/34" for this address object.
@@ -68,6 +68,6 @@ GroupAddress.prototype.toString = function() {
         sub = bytes[1];
 
     return [main, middle, sub].join('/');
-}
+};
 
 module.exports = GroupAddress;

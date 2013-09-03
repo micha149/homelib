@@ -56,7 +56,7 @@ describe('Packet', function() {
                 packet = new KnxIp.Packet(expectedServiceType, expectedData),
                 str = packet.inspect();
 
-            assert.equal(str, '<KnxIpPacket (tunneling.ack) 6d 69 63 68 61 31 34 39>')
+            assert.equal(str, '<KnxIpPacket (tunneling.ack) 6d 69 63 68 61 31 34 39>');
         });
     });
 
@@ -88,8 +88,8 @@ describe('Packet', function() {
                 packet = new KnxIp.Packet(0x0421, expectedData);
 
             assert.deepEqual(packet.getData(), expectedData);
-        })
-    })
+        });
+    });
 });
 
 describe('Packet.parse()', function() {
@@ -160,7 +160,7 @@ describe('Packet.factory', function() {
 
     afterEach(function() {
         sandbox.restore();
-    })
+    });
 
     it('calls TunnelingRequest\'s parse method on buffer with 0x0420', function() {
         var stub = sandbox.stub(KnxIp.TunnelingRequest, "parse"),
@@ -190,6 +190,6 @@ describe('Packet.factory', function() {
 
         assert.ok(stub.calledOnce, "parse on Packet called");
         assert.ok(stub.calledWith(buffer), "passed buffer to parse method");
-    })
+    });
 
 });

@@ -1,7 +1,6 @@
 var util = require('util'),
-    UnexpectedValueError = require('../Error/UnexpectedValueError');
-
-exp = /^([+-]?)\s*(?:(\d+)w)?\s*(?:(\d+)d)?\s*(?:(\d+)h)?\s*(?:(\d+)m)?\s*(?:(\d+)s)?\s*$/;
+    UnexpectedValueError = require('../Error/UnexpectedValueError'),
+    exp = /^([+-]?)\s*(?:(\d+)w)?\s*(?:(\d+)d)?\s*(?:(\d+)h)?\s*(?:(\d+)m)?\s*(?:(\d+)s)?\s*$/;
 
 function Duration(dur) {
 
@@ -31,12 +30,13 @@ function Duration(dur) {
 
 Duration.prototype.valueOf = function() {
     return this.duration;
-}
+};
 
 
 Duration.prototype.toString = function() {
     var rest = Math.abs(this.duration),
-        str = this.duration < 0 ? "-" : "";
+        str = this.duration < 0 ? "-" : "",
+        key;
 
     var defs = {
         "w": 604800000,
@@ -54,6 +54,6 @@ Duration.prototype.toString = function() {
     }
 
     return str.trim();
-}
+};
 
 module.exports = Duration;

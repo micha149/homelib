@@ -21,6 +21,7 @@ function TunnelingRequest(channelId, sequence, message) {
     this._sequence = sequence;
     this._message = message;
 }
+
 util.inherits(TunnelingRequest, Packet);
 
 TunnelingRequest.prototype.getData = function() {
@@ -32,19 +33,19 @@ TunnelingRequest.prototype.getData = function() {
     ];
 
     return header.concat(this._message.toArray());
-}
+};
 
 TunnelingRequest.prototype.getChannelId = function() {
     return this._channelId;
-}
+};
 
 TunnelingRequest.prototype.getSequence = function() {
     return this._sequence;
-}
+};
 
 TunnelingRequest.prototype.getMessage = function() {
     return this._message;
-}
+};
 
 TunnelingRequest.parse = function(buffer) {
     var channelId = buffer[7],
@@ -53,6 +54,6 @@ TunnelingRequest.parse = function(buffer) {
         msg = Message.parse(buffer.slice(12 + additionalInfoLength));
 
     return new TunnelingRequest(channelId, sequence, msg);
-}
+};
 
 module.exports = TunnelingRequest;

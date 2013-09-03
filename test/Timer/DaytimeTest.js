@@ -21,19 +21,19 @@ describe('Timer.Daytime', function() {
 
             assert.throws(function() {
                 daytime = new Daytime('18:44');
-            })
+            });
 
             assert.throws(function() {
                 daytime = new Daytime('18:44:12:22');
-            })
+            });
 
             assert.throws(function() {
                 daytime = new Daytime('18:44::');
-            })
+            });
 
             assert.throws(function() {
                 daytime = new Daytime('18:44:xx');
-            })
+            });
         });
     });
 
@@ -43,11 +43,11 @@ describe('Timer.Daytime', function() {
 
         beforeEach(function() {
             clock = sinon.useFakeTimers(new Date("Sun May 05 2013 16:55:00 GMT+0200 (CEST)").getTime());
-        })
+        });
 
         afterEach(function() {
             clock.restore();
-        })
+        });
 
         it('returns correct time of following day if time is smaller current time', function() {
 
@@ -56,7 +56,7 @@ describe('Timer.Daytime', function() {
 
             next = daytime.getNextDate();
 
-            assert.deepEqual(next, new Date("Mon May 06 2013 14:00:00 GMT+0200 (CEST)"))
+            assert.deepEqual(next, new Date("Mon May 06 2013 14:00:00 GMT+0200 (CEST)"));
         });
 
         it('returns correct time of same day if time is greater current time', function() {
@@ -66,7 +66,7 @@ describe('Timer.Daytime', function() {
 
             next = daytime.getNextDate();
 
-            assert.deepEqual(next, new Date("Sun May 05 2013 18:30:27 GMT+0200 (CEST)"))
+            assert.deepEqual(next, new Date("Sun May 05 2013 18:30:27 GMT+0200 (CEST)"));
         });
 
         it('returns correct time of next day if time is equal current time', function() {
@@ -76,7 +76,7 @@ describe('Timer.Daytime', function() {
 
             next = daytime.getNextDate();
 
-            assert.deepEqual(next, new Date("Mon May 06 2013 16:55:00 GMT+0200 (CEST)"))
+            assert.deepEqual(next, new Date("Mon May 06 2013 16:55:00 GMT+0200 (CEST)"));
         });
     });
 

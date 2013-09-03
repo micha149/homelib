@@ -51,7 +51,7 @@ RandomOffset.prototype.setMin = function (dur) {
     }
     this._min = dur;
     return this;
-}
+};
 
 /**
  * Sets the maximum time offset
@@ -66,7 +66,7 @@ RandomOffset.prototype.setMax = function (dur) {
     }
     this._max = dur;
     return this;
-}
+};
 
 /**
  * Returns a new randomized date object based on previously given #Time object and configured min and max values.

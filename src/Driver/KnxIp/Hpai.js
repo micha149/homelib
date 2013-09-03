@@ -24,15 +24,16 @@ function Hpai(address, port) {
 
 Hpai.prototype._assertAddress = function (address) {
     return (typeof address === "string") && address.match(IPADDR);
-}
+};
 
 Hpai.prototype.toBuffer = function() {
     var buf = new Buffer(this.toArray());
     return buf;
-}
+};
 
 Hpai.prototype.toArray = function() {
-    var adr = this.address.split(".")
+    var adr = this.address.split(".");
+
     return [
         0x08,
         this.protocol === "udp" ? 0x01 : 0x00,
@@ -43,5 +44,6 @@ Hpai.prototype.toArray = function() {
         (this.port & 0xff00) >> 8,
         (this.port & 0xff)
     ];
-}
+};
+
 module.exports = Hpai;

@@ -20,7 +20,7 @@ Connection.prototype._onDriverMessage = function (message) {
     if (callbacks) {
         invoke(callbacks, "call", this, message);
     }
-}
+};
 
 Connection.prototype.send = function(msg, callback) {
     var driver = this._driver;
@@ -32,7 +32,7 @@ Connection.prototype.send = function(msg, callback) {
     }
 
     driver.send(msg, callback);
-}
+};
 
 Connection.prototype.on = function (address, callback) {
     var driver     = this._driver,
@@ -45,6 +45,6 @@ Connection.prototype.on = function (address, callback) {
 
     listeners[rawAddress] = listeners[rawAddress] || [];
     listeners[rawAddress].push(callback);
-}
+};
 
 module.exports = Connection;

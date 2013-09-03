@@ -7,7 +7,7 @@ var GroupAddress    = require('./GroupAddress.js'),
  *
  * @constructor
  */
-var Message = function() {
+function Message () {
     this._priority       = 3;
     this._repeated       = false;
     this._routingCounter = 6;
@@ -36,11 +36,11 @@ Message.prototype.setCommand = function(command) {
             this._command = 1;
             break;
         default:
-            throw new Error('Unknown value "' + command + '" for message command')
+            throw new Error('Unknown value "' + command + '" for message command');
     }
     
     return this;
-}
+};
 
 /**
  * Returns the configured message command
@@ -53,7 +53,7 @@ Message.prototype.getCommand = function() {
         case 2: return "write";
         case 1: return "answer";
     }
-}
+};
 
 /**
  * Set the priority of this message.
@@ -80,7 +80,7 @@ Message.prototype.setPriority = function(priority) {
             throw new Error('Unknown value "' + priority + '" for message priority');
     }
     return this;
-}
+};
 
 /**
  * Returns the human readable priority of this message
@@ -98,7 +98,7 @@ Message.prototype.getPriority = function() {
         case 3:
             return "normal";
     }
-}
+};
 
 /**
  * Set, if this message is an repeated message.
@@ -109,7 +109,7 @@ Message.prototype.getPriority = function() {
  */
 Message.prototype.setRepeated = function(repeated) {
     this._repeated = repeated !== false;
-}
+};
 
 /**
  * Returns if this message should be repeated by routers.
@@ -118,7 +118,7 @@ Message.prototype.setRepeated = function(repeated) {
  */
 Message.prototype.isRepeated = function() {
     return this._repeated;
-}
+};
 
 /**
  * Sets the destination of this message
@@ -133,7 +133,7 @@ Message.prototype.setDestination = function(address) {
     }
     this._destination = address;
     return this;
-}
+};
 
 /**
  * Returns destination address of this message
@@ -142,7 +142,7 @@ Message.prototype.setDestination = function(address) {
  */
 Message.prototype.getDestination = function() {
     return this._destination;
-}
+};
 
 /**
  * Sets the origin of this message
@@ -157,15 +157,15 @@ Message.prototype.setOrigin = function(address) {
     }
     this._origin = address;
     return this;
-}
+};
 
 Message.prototype.getRoutingCounter = function() {
     return this._routingCounter;
-}
+};
 
 Message.prototype.setData = function(data) {
     this._data = data;
-}
+};
 
 /**
  * The control byte contains information about the messages priority (P)
@@ -188,7 +188,7 @@ Message.prototype.getControlByte = function() {
     value |= (this._priority & 3) << 2;
     
     return value;
-}
+};
 
 
 /**
@@ -209,7 +209,7 @@ Message.prototype.getDafRoutingLengthByte = function() {
     value |= (this._routingCounter & 7) << 4;
     value |= (this._data.length - 1) & 15;
     return value;
-}
+};
 
 /**
  * Returns the parity byte for this message. It is calculated by
@@ -231,7 +231,7 @@ Message.prototype.createParityByte = function(bytes) {
     }
     
     return parity;
-}
+};
 
 /**
  * Returns the data information part of a message. The length of the
@@ -251,10 +251,10 @@ Message.prototype.getDataBytes = function() {
         data[1] = data[1] | this._data[0];
     } else {
         data.push.apply(data, this._data);
-    };
+    }
     
     return data;
-}
+};
 
 /**
  * Returns the raw information of an telegram, which can be transmitted
@@ -275,7 +275,7 @@ Message.prototype.toArray = function() {
     raw.push(this.createParityByte(raw));
     
     return raw;
-}
+};
 
 /**
  * Parses a given buffer into a message instance
@@ -302,6 +302,6 @@ Message.parse = function(data) {
     }
 
     return msg;
-}
+};
 
 module.exports = Message;

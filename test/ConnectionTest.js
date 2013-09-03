@@ -34,7 +34,7 @@ describe('Connection', function() {
                       .withArgs('message')
                       .callsArg(1);
 
-            connection = new Connection(driver)
+            connection = new Connection(driver);
 
             driverMock.verify();
 
@@ -198,6 +198,6 @@ describe('Connection', function() {
             assert.equal(callbackA.firstCall.args[0], message, "Message passed");
             assert.ok(callbackB.calledOnce, "Callback B called");
         });
-    })
+    });
     
 });

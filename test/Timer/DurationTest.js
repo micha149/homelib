@@ -2,7 +2,7 @@ var homelib = require('../../homelib'),
     Duration = homelib.Timer.Duration,
     UnexpectedValueError = homelib.Error.UnexpectedValueError,
     assert  = require('assert'),
-    sinon   = require('sinon')
+    sinon   = require('sinon'),
     each    = require('underscore').each;
 
 describe('Timer.Duration', function() {
@@ -49,18 +49,18 @@ describe('Timer.Duration', function() {
         each(testCases, function(int, str) {
             it(str + " => " + int, function() {
                 assert.equal(new Duration(str), int);
-            })
+            });
         });
 
-    })
+    });
 
     describe('can be casted to a readable string', function() {
 
         each(testCases, function(int, str) {
             it(int + " => " + str, function() {
                 assert.equal(new Duration(int).toString(), str);
-            })
+            });
         });
-    })
+    });
 
 });

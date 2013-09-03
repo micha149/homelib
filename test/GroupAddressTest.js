@@ -8,7 +8,7 @@ describe('GroupAddress', function () {
 
     it("is a constructor", function() {
         assert.equal(typeof GroupAddress, "function");
-    })
+    });
     
     describe('constructor', function () {
     

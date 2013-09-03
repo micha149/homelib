@@ -38,14 +38,14 @@ describe("ConnectionRequest", function() {
             client.toArray.returns([0, 0, 0, 0, 0, 0, 0, 0]);
             server.toArray.returns([0, 0, 0, 0, 0, 0, 0, 0]);
 
-            var buf = req.toBuffer();
+            buf = req.toBuffer();
 
             assert.deepEqual(buf.slice(0,6), expected);
         });
 
         it('returns buffer with correct client hpai', function() {
             var buf,
-                expectedClientData = [1,2,3,4,5,6,7,8]
+                expectedClientData = [1,2,3,4,5,6,7,8],
                 client = sinon.createStubInstance(KnxIp.Hpai),
                 server = sinon.createStubInstance(KnxIp.Hpai),
                 req    = new KnxIp.ConnectionRequest(client, server);

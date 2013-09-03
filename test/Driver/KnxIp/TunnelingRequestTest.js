@@ -95,13 +95,13 @@ describe("TunnelingRequest.parse", function() {
 
     afterEach(function() {
         sandbox.restore();
-    })
+    });
 
     it('returns instance for given buffer', function() {
         var message = new Message(),
             channelId = 2,
             sequence = 128,
-            buffer = new Buffer([0x06, 0x10, 0x04, 0x21, 0x00, 0x0a, 0x04, channelId, sequence, 0x00, 0x29, 0x01, 0x99, 0x01, 0x02, 0x03])
+            buffer = new Buffer([0x06, 0x10, 0x04, 0x21, 0x00, 0x0a, 0x04, channelId, sequence, 0x00, 0x29, 0x01, 0x99, 0x01, 0x02, 0x03]),
             expected = new KnxIp.TunnelingRequest(channelId, sequence, message);
 
         sandbox.stub(Message, 'parse').returns(message);

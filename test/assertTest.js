@@ -7,8 +7,8 @@ describe('assert', function() {
     describe('.implements()', function() {
 
         var interface = function() {};
-        interface.prototype.methodOne = function() {}
-        interface.prototype.methodTwo = function(paramA, paramB) {}
+        interface.prototype.methodOne = function() {};
+        interface.prototype.methodTwo = function(paramA, paramB) {};
         interface.prototype.propOne = "A string";
         interface.prototype.propTwo = 123;
         interface.prototype.propThree = false;
@@ -60,4 +60,4 @@ describe('assert', function() {
 
     });
 
-})
+});

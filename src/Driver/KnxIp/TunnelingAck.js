@@ -17,8 +17,9 @@ function TunnelingAck(channelId, sequence, status) {
     status = status || 0x00;
 
     this._serviceType = 0x0421;
-    this._data = [length, channelId & 0xff, sequence & 0xff, status & 0xff]
+    this._data = [length, channelId & 0xff, sequence & 0xff, status & 0xff];
 }
+
 util.inherits(TunnelingAck, Packet);
 
 /**
@@ -29,6 +30,6 @@ util.inherits(TunnelingAck, Packet);
  */
 TunnelingAck.parse = function(buffer) {
     return new TunnelingAck(buffer[7], buffer[8], buffer[9]);
-}
+};
 
 module.exports = TunnelingAck;

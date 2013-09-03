@@ -40,6 +40,6 @@ ConnectionRequest.prototype.getData = function() {
         data = this._data;
 
     return client.concat(server, data);
-}
+};
 
 module.exports = ConnectionRequest;

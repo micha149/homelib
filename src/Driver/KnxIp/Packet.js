@@ -82,7 +82,7 @@ Packet.prototype.toBuffer = function() {
     }
 
     return buffer;
-}
+};
 
 /**
  * Returns a string representation for this packet. This method is
@@ -112,7 +112,7 @@ Packet.prototype.inspect = function() {
  */
 Packet.prototype.getServiceType = function() {
     return this._serviceType;
-}
+};
 
 /**
  * Returns a human readable version of the service type.
@@ -132,7 +132,7 @@ Packet.prototype.getServiceName = function() {
     }
 
     return string;
-}
+};
 
 /**
  * Returns packet data
@@ -142,7 +142,7 @@ Packet.prototype.getServiceName = function() {
  */
 Packet.prototype.getData = function() {
     return this._data;
-}
+};
 
 /**
  * Static method to parse an array of buffer into an package object. If the
@@ -172,7 +172,7 @@ Packet.parse = function(raw) {
     }
 
     return new Packet((raw[2] << 8 | raw[3]), raw.slice(6));
-}
+};
 
 /**
  * Turns a received buffer into the equivalent object representation.
@@ -194,6 +194,6 @@ Packet.factory = function(buffer) {
         default:
             return Packet.parse(buffer);
     }
-}
+};
 
 module.exports = Packet;

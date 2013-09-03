@@ -32,7 +32,7 @@ describe('KnxIpDriver', function() {
         });
 
         implements(driver, homelib.Driver.DriverInterface);
-    })
+    });
 
     describe('constructor', function() {
 
@@ -89,7 +89,7 @@ describe('KnxIpDriver', function() {
                 remotePort: expectedPort
             });
             sandbox.stub(driver, '_createConnectionRequest').returns(connectionRequestStub);
-        })
+        });
 
         it('sends connection request and waits for connection response', function() {
 
@@ -183,13 +183,13 @@ describe('KnxIpDriver', function() {
 
         var driver, clock;
 
-        beforeEach(function() {;
+        beforeEach(function() {
             clock = sandbox.useFakeTimers();
             driver = new KnxIpDriver({
                 remoteAddress: '127.0.0.1',
                 localAddress: '127.0.0.1',
                 maxRepeats: 3
-            })
+            });
 
             sinon.stub(driver, '_socketSend');
         });
@@ -353,13 +353,13 @@ describe('KnxIpDriver', function() {
 
         it('triggers `message` event if a tunneling.request is received', function() {
             var packet  = sinon.createStubInstance(KnxIp.TunnelingRequest),
-                message = sinon.createStubInstance(Message)
+                message = sinon.createStubInstance(Message),
                 spy     = sinon.spy();
 
             packet.getServiceName.returns('tunneling.request');
             packet.getMessage.returns(message);
 
-            driver.on('message', spy)
+            driver.on('message', spy);
 
             driver._onPacket(packet);
 

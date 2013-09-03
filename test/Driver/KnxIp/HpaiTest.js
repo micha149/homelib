@@ -13,7 +13,7 @@ describe('Hpai', function() {
 
     afterEach(function() {
         sandbox.restore();
-    })
+    });
 
     describe('constructor', function() {
 
@@ -38,7 +38,7 @@ describe('Hpai', function() {
             assert.throws(function() {
                 var hpai = new KnxIp.Hpai("fooo", 1);
             });
-        })
+        });
 
         it('throws error if port is not a number', function() {
             assert.throws(function() {
@@ -52,7 +52,7 @@ describe('Hpai', function() {
                 hpai = new KnxIp.Hpai("192.168.23.45", 65536);
             }, /must be smaller/);
         });
-    })
+    });
 
     describe('_assertAddress', function() {
 

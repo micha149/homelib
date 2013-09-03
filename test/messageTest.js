@@ -3,7 +3,7 @@ var assert          = require('assert'),
     homelib         = require('../'),
     Message         = homelib.Message,
     GroupAddress    = homelib.GroupAddress,
-    PhysicalAddress = homelib.PhysicalAddress
+    PhysicalAddress = homelib.PhysicalAddress,
     Datapoint       = homelib.Datapoint;
     
 describe('Message', function() {
@@ -88,7 +88,7 @@ describe('Message', function() {
             assert.equal(msg.getCommand(), "answer");
             msg.setCommand('write');
             assert.equal(msg.getCommand(), "write");
-        })
+        });
         
     });
     
@@ -141,7 +141,7 @@ describe('Message', function() {
         it('throws an error on other types', function() {
             var msg = new Message(),
                 dpt = new Datapoint(),
-                adr = new GroupAddress('1/2/3', dpt)
+                adr = new GroupAddress('1/2/3', dpt);
                 
             assert.throws(function() {
                 msg.setOrigin(adr);
@@ -161,7 +161,7 @@ describe('Message', function() {
             var msg = new Message();
             msg.setRepeated(true);
             assert.equal(msg._repeated, true);
-        })
+        });
         
         it('sets always a boolean value', function() {
             var msg = new Message();
@@ -208,7 +208,7 @@ describe('Message', function() {
                 dpt = new Datapoint(),
                 adr = new GroupAddress('1/2/3', dpt);
                 
-            msg.setDestination(adr)
+            msg.setDestination(adr);
             assert.equal(msg.getDafRoutingLengthByte() & 128, 128);
         });
         
@@ -246,7 +246,7 @@ describe('Message', function() {
                       
             assert.equal(data.length, 2);
             assert.equal(data[0], 0);
-        })
+        });
         
         it('contains command value', function() {
             var data,
@@ -257,12 +257,12 @@ describe('Message', function() {
 
             assert.equal(data[0], 0);
             assert.equal(data[1] & 192, 64);
-        })
+        });
         
         it('returns only two bytes if data <= 6bit', function() {
             var data,
                 msg  = new Message();
-            msg.setData([0x20])
+            msg.setData([0x20]);
             data = msg.getDataBytes();
 
             assert.equal(data.length, 2);
@@ -274,7 +274,7 @@ describe('Message', function() {
             var data,
                 msg  = new Message();
                 
-            msg.setData([0x40])
+            msg.setData([0x40]);
             data = msg.getDataBytes();
 
             assert.equal(data.length, 3);
@@ -307,12 +307,12 @@ describe('Message', function() {
             .once()
             .returns(expected[0]);
             
-;       originMock
+        originMock
             .expects('getRaw')
             .once()
             .returns([expected[1], expected[2]]); // 4/2'155
             
-;       destMock
+        destMock
             .expects('getRaw')
             .once()
             .returns([expected[3], expected[4]]); // 4/2/155

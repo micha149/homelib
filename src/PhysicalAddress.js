@@ -7,17 +7,17 @@ var isArray = require('underscore').isArray;
  * Each group address needs a datatype instance for validating data before
  * sending. An optional title can be stored for organization purposes.
  */
-var PhysicalAddress = function(address) {
+function PhysicalAddress(address) {
     if (isArray(address) && address.length === 2 && address[0] < 256 && address[1] < 256) {
         this._address = address;
         return;
     }
-    this._address = this.parseAddress(address)
+    this._address = this.parseAddress(address);
 }
 
 PhysicalAddress.prototype.getRaw = function() {
     return this._address;
-}
+};
 
 /**
  * Parses a physical address string into two bytes
@@ -46,7 +46,7 @@ PhysicalAddress.prototype.parseAddress = function (str) {
     }
     
     throw new Error(str + " is not a valid physical address.");
-}
+};
 
 /**
  * Returns a string representation like "1.4.34" for this address object.
@@ -60,6 +60,6 @@ PhysicalAddress.prototype.toString = function() {
         member = bytes[1];
 
     return [area, line, member].join('.');
-}
+};
 
 module.exports = PhysicalAddress;
