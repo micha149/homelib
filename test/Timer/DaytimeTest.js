@@ -1,3 +1,5 @@
+process.env.TZ = 'Europe/Berlin';
+
 var Daytime = require('../../homelib').Timer.Daytime,
     assert  = require('assert'),
     sinon   = require('sinon');
