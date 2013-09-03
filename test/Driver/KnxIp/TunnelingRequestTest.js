@@ -35,7 +35,7 @@ describe("TunnelingRequest", function() {
                 expected = new Buffer([0x06, 0x10, 0x04, 0x20, 0x00, 0x0d, 0x04, channelId, sequence, 0x00, 0x01, 0x02, 0x03]),
                 request = new KnxIp.TunnelingRequest(channelId, sequence, message);
 
-            message.getRaw.returns([0x01, 0x02, 0x03]);
+            message.toArray.returns([0x01, 0x02, 0x03]);
 
             assert.deepEqual(request.toBuffer(), expected);
         });

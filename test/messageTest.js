@@ -284,7 +284,7 @@ describe('Message', function() {
         
     });
     
-    describe('.getRaw()', function() {
+    describe('.toArray()', function() {
 
         var result,
             expected,
@@ -328,7 +328,7 @@ describe('Message', function() {
             .withArgs(expected.slice(0,8))
             .returns(expected[8]);
         
-        result = msg.getRaw();
+        result = msg.toArray();
                 
         it('returns correct bytes', function() {
             assert.deepEqual(result, expected);    

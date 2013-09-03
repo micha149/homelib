@@ -231,12 +231,14 @@ Message.prototype.getDataBytes = function() {
  *
  * @returns {Number[]} Array with bytes to transmit
  */
-Message.prototype.getRaw = function() {
-    var raw = [];
+Message.prototype.toArray = function() {
+    var raw = [],
+        origin = this._origin ? this._origin.getRaw() : [0, 0],
+        destination = this._destination ? this._destination.getRaw() : [0, 0];
 
     raw.push(this.getControlByte());
-    raw.push.apply(raw, this._origin.getRaw());    
-    raw.push.apply(raw, this._destination.getRaw());
+    raw.push.apply(raw, origin);
+    raw.push.apply(raw, destination);
     raw.push(this.getDafRoutingLengthByte());
     raw.push.apply(raw, this.getDataBytes());
     raw.push(this.createParityByte(raw));

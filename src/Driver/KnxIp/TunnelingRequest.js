@@ -29,7 +29,7 @@ TunnelingRequest.prototype.getData = function() {
         0 // reserved
     ];
 
-    return header.concat(this._message.getRaw());
+    return header.concat(this._message.toArray());
 }
 
 TunnelingRequest.prototype.getChannelId = function() {
