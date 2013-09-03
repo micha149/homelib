@@ -1,2 +1,2 @@
-HomeLib [![Build Status](https://travis-ci.org/micha149/homelib.png)](https://travis-ci.org/micha149/homelib)
+HomeLib [![Build Status](https://travis-ci.org/micha149/homelib.png)](https://travis-ci.org/micha149/homelib) [![Dependency Status](https://gemnasium.com/micha149/homelib.png)](https://gemnasium.com/micha149/homelib)
 =======
