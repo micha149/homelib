@@ -83,6 +83,24 @@ Message.prototype.setPriority = function(priority) {
 }
 
 /**
+ * Returns the human readable priority of this message
+ *
+ * @returns {string}
+ */
+Message.prototype.getPriority = function() {
+    switch (this._priority) {
+        case 0:
+            return "system";
+        case 2:
+            return "alarm";
+        case 1:
+            return "high";
+        case 3:
+            return "normal";
+    }
+}
+
+/**
  * Set, if this message is an repeated message.
  *
  * @param     {Boolean} repeated True if repeated
@@ -91,6 +109,15 @@ Message.prototype.setPriority = function(priority) {
  */
 Message.prototype.setRepeated = function(repeated) {
     this._repeated = repeated !== false;
+}
+
+/**
+ * Returns if this message should be repeated by routers.
+ *
+ * @returns {Boolean}
+ */
+Message.prototype.isRepeated = function() {
+    return this._repeated;
 }
 
 /**
@@ -130,6 +157,10 @@ Message.prototype.setOrigin = function(address) {
     }
     this._origin = address;
     return this;
+}
+
+Message.prototype.getRoutingCounter = function() {
+    return this._routingCounter;
 }
 
 Message.prototype.setData = function(data) {
@@ -249,10 +280,28 @@ Message.prototype.toArray = function() {
 /**
  * Parses a given buffer into a message instance
  *
- * @param {buffer.Buffer} buffer
+ * @param  {buffer.Buffer} buffer
  * @return {Message}
  * @static
  */
-Message.parse = function() {}
+Message.parse = function(data) {
+    var msg     =  new Message(),
+        payload = data.slice(6, -1);
+
+    msg._priority = (data[0] & 12) >> 2;
+    msg._repeated = (data[0] & 32) === 32;
+    msg._routingCounter = (data[5] & 112) >> 4;
+    msg._origin = new PhysicalAddress([data[1], data[2]]);
+    msg._destination = new GroupAddress([data[3], data[4]], 3);
+    msg._command = (payload[0] & 3) << 2 | (payload[1] & 192) >> 6;
+
+    if (payload.length === 2) {
+        msg._data = [payload[1] & 63];
+    } else {
+        msg._data = payload.slice(2);
+    }
+
+    return msg;
+}
 
 module.exports = Message;

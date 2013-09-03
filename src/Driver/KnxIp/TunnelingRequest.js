@@ -7,6 +7,8 @@ var Packet = require('./Packet.js'),
  * to reply for a received tunneling request. So, the sender becomes notified
  * about a successful transmission.
  *
+ * {@img knx_ip_tunneling_request.png Schema of a knx ip tunneling request}
+ *
  * @class Driver.KnxIp.TunnelingRequest
  * @param {Number} channelId
  * @param {Number} sequence Next sequence count
@@ -45,8 +47,12 @@ TunnelingRequest.prototype.getMessage = function() {
 }
 
 TunnelingRequest.parse = function(buffer) {
-    var msg = Message.parse(buffer.slice(9));
-    return new TunnelingRequest(buffer[7], buffer[8], msg);
+    var channelId = buffer[7],
+        sequence = buffer[8],
+        additionalInfoLength = buffer[11],
+        msg = Message.parse(buffer.slice(12 + additionalInfoLength));
+
+    return new TunnelingRequest(channelId, sequence, msg);
 }
 
 module.exports = TunnelingRequest;

@@ -338,8 +338,64 @@ describe('Message', function() {
             originMock.verify();
             destMock.verify();
             msgMock.verify();
-        })
+        });
+
+        it('returns zero addresses if no origin or destination was set', function() {
+            var msg = new Message(),
+                raw = msg.toArray();
+
+            assert.deepEqual(raw.slice(1,3), [0x00, 0x00], "origin is correct");
+            assert.deepEqual(raw.slice(3,5), [0x00, 0x00], "destination is correct");
+        });
 
     });
-    
+
+    describe('.parse()', function() {
+
+        it('parses array of bytes into message object', function() {
+            var data = [0xb4, 0xd0, 0x11, 0x04, 0x0a, 0x27, 0x01, 0x00, 0x81],
+                msg = Message.parse(data);
+
+            assert.ok(msg.isRepeated());
+            assert.equal(msg.getPriority(), "high");
+            assert.equal(msg.getRoutingCounter(), 2);
+
+            assert.deepEqual(msg._origin.toString(), '13.0.17');
+            assert.deepEqual(msg._destination.toString(), '0/4/10');
+
+            assert.deepEqual(msg._data, [0x00]);
+
+        });
+
+        it('parses bytes from an example into correct message object', function() {
+            var data = [0xbc, 0x11, 0x02, 0x10, 0x00, 0xe1, 0x00, 0x81, 0x20],
+                msg = Message.parse(data);
+
+            assert.ok(msg.isRepeated());
+            assert.equal(msg.getPriority(), "normal");
+            assert.equal(msg.getRoutingCounter(), 6);
+
+            assert.deepEqual(msg._origin.toString(), '1.1.2');
+            assert.deepEqual(msg._destination.toString(), '2/0/0');
+
+            assert.deepEqual(msg._data, [0x01]);
+            assert.deepEqual(msg._command, 2);
+        });
+
+        it('parses bytes with 8 bit data into correct message', function() {
+            var data = [0xbc, 0x11, 0x02, 0x10, 0x00, 0xe1, 0x00, 0x80, 0xaa, 0x20],
+                msg = Message.parse(data);
+
+            assert.ok(msg.isRepeated());
+            assert.equal(msg.getPriority(), "normal");
+            assert.equal(msg.getRoutingCounter(), 6);
+
+            assert.deepEqual(msg._origin.toString(), '1.1.2');
+            assert.deepEqual(msg._destination.toString(), '2/0/0');
+
+            assert.deepEqual(msg._data, [0xaa]);
+            assert.deepEqual(msg._command, 2);
+        });
+
+    });
 });
