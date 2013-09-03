@@ -28,7 +28,6 @@ util.inherits(TunnelingAck, Packet);
  * @returns {Driver.KnxIp.TunnelingAck}
  */
 TunnelingAck.parse = function(buffer) {
-    console.info(buffer);
     return new TunnelingAck(buffer[7], buffer[8], buffer[9]);
 }
 
