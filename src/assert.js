@@ -1,12 +1,12 @@
 var ImplementationError = require('./Error/ImplementationError');
 
 module.exports = {
-    implements: function(object, interface) {
+    implements: function(object, interfaceObject) {
         var key, expected, actual;
 
-        for (key in interface.prototype) {
+        for (key in interfaceObject.prototype) {
             actual = object[key];
-            expected = interface.prototype[key];
+            expected = interfaceObject.prototype[key];
 
             if (actual === undefined) {
                 throw new ImplementationError('Missing property "' + key + '"');
