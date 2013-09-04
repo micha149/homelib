@@ -1,15 +1,10 @@
 {
     "--title": "Homelib API documentation",
     "--warnings": ["-link", "-no_doc"],
-    "--output": "output/",
     "--categories": "categories.json",
     "--images": "images/",
     "--external": [
         "dgram.Socket,",
         "buffer.Buffer"
-    ],
-    "--": [
-        "../src/",
-        "external/"
     ]
 }

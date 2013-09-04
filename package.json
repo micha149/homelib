@@ -14,11 +14,17 @@
     "devDependencies": {
         "sinon": ">=1.6.0",
         "mocha": "*",
-        "visionmedia-jscoverage": "*"
+        "visionmedia-jscoverage": "*",
+        "grunt": "~0.4.1",
+        "grunt-contrib-jshint": "~0.6.4",
+        "grunt-mocha-test": "~0.6.3",
+        "grunt-jsduck": "~0.1.4",
+        "blanket": "~1.1.5",
+        "grunt-contrib-clean": "~0.5.0"
     },
     "main": "./homelib.js",
     "scripts": {
-        "test": "find ./test -name '*Test.js' | xargs ./node_modules/.bin/mocha"
+        "test": "grunt"
     },
     "license": "MIT",
     "engines": {
