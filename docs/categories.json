@@ -9,7 +9,8 @@
                     "Message",
                     "GroupAddress",
                     "PhysicalAddress",
-                    "Datapoint"
+                    "Datapoint",
+                    "Driver.DriverInterface"
                 ]
             },
             {

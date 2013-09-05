@@ -2,6 +2,15 @@ var Driver = require('./Driver/DriverInterface'),
     invoke = require('underscore').invoke,
     assert = require('./assert');
 
+/**
+ * The connection object represents an interface to the knx
+ * bus. It needs a specific driver instance for the used
+ * medium like KnxIP.
+ *
+ * @class Connection
+ * @param {Driver.DriverInterface} driver
+ * @constructor
+ */
 function Connection(driver) {
 
     assert.implements(driver, Driver);

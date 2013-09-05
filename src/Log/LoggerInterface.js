@@ -1,3 +1,9 @@
+/**
+ * Interface object for logger objects
+ *
+ * @class Log.LoggerInterface
+ * @constructor
+ */
 function LoggerInterface() {}
 
 LoggerInterface.prototype.emergency = function(msg) {};

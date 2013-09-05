@@ -12,8 +12,8 @@ var Daytime = require('./Daytime'),
  *        max: "+45m"
  *    });
  *
- * @param {Timer.Time|object} time
- * @param {Timer.Time} time.time
+ * @param {Timer.Daytime|Object} time
+ * @param {Timer.Daytime} time.time
  * @param {Timer.Duration} time.min
  * @param {Timer.Duration} time.max
  * @class Timer.RandomOffset

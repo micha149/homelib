@@ -36,7 +36,9 @@ module.exports = function(grunt) {
                 dest: 'docs/output',
                 src: ['docs/external', 'src'],
                 options: {
-                    config: 'docs/config.json'
+                    config: 'docs/config.json',
+                    warnings: '-cat_class_missing,-cat_no_match',
+                    warningsExitNonzero: true
                 }
             }
         },

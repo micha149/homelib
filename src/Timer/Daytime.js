@@ -1,3 +1,8 @@
+/**
+ * @class Timer.Daytime
+ * @param {String} str Time string in 24 hours format like '14:36'
+ * @constructor
+ */
 function Daytime(str) {
     var matches = str.match(/^(\d{2})\:(\d{2})\:(\d{2})$/);
 

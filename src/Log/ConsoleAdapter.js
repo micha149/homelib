@@ -1,3 +1,11 @@
+/**
+ * Console adapter for internal logger. Passes all log calls
+ * to node console object.
+ *
+ * @class Log.ConsoleAdapter
+ * @param {Object} customConsole
+ * @constructor
+ */
 function ConsoleAdapter (customConsole) {
     this._console = customConsole || console;
 }

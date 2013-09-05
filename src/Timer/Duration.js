@@ -2,6 +2,11 @@ var util = require('util'),
     UnexpectedValueError = require('../Error/UnexpectedValueError'),
     exp = /^([+-]?)\s*(?:(\d+)w)?\s*(?:(\d+)d)?\s*(?:(\d+)h)?\s*(?:(\d+)m)?\s*(?:(\d+)s)?\s*$/;
 
+/**
+ * @class Timer.Duration
+ * @param {Number|String} dur Duration in seconds or duration string like '2h 24m'
+ * @constructor
+ */
 function Duration(dur) {
 
     var matches;

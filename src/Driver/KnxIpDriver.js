@@ -19,7 +19,7 @@ var STATUS_CLOSED     = 'closed',
  * Driver to connect an knx ip interface.
  *
  * @class Driver.KnxIpDriver
- * @extends event.EventEmitter
+ * @extends events.EventEmitter
  *
  * @constructor
  * @param {Object} options Config options
@@ -55,7 +55,7 @@ function KnxIpDriver(options) {
 
         /**
          * Logger instance for log messages
-         * @cfg {log.LoggerInterface}
+         * @cfg {Log.LoggerInterface}
          */
         logger: new Log.NullLogger(),
 
@@ -168,7 +168,7 @@ KnxIpDriver.prototype.connect = function() {
 /**
  * Returns a new connection request based on driver options
  *
- * @returns {KnxIp.ConnectionRequest}
+ * @returns {Driver.KnxIp.ConnectionRequest}
  * @private
  */
 KnxIpDriver.prototype._createConnectionRequest = function() {
@@ -235,7 +235,7 @@ KnxIpDriver.prototype._socketSend = function(buffer) {
  * into a packet. If this succeed, a #packet event will be emitted.
  *
  * @param {buffer.Buffer} data
- * @triggers packet
+ * @fires packet
  * @private
  */
 KnxIpDriver.prototype._onSocketMessage = function(data) {
@@ -254,7 +254,7 @@ KnxIpDriver.prototype._onSocketMessage = function(data) {
 /**
  *
  * @param {Driver.KnxIp.Packet} packet
- * @triggers message
+ * @fires message
  * @private
  */
 KnxIpDriver.prototype._onPacket = function(packet) {

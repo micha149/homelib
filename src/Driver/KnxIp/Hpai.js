@@ -3,6 +3,12 @@ var UnexpectedValueError = require('../../Error/UnexpectedValueError'),
 
 IPADDR = /^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/;
 
+/**
+ * @class Driver.KnxIp.Hpai
+ * @param {String} address IPv4 Address
+ * @param {Number} port Port number
+ * @constructor
+ */
 function Hpai(address, port) {
 
     if (!this._assertAddress(address)) {

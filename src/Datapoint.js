@@ -9,6 +9,11 @@ var defaults = {
     }
 };
 
+/**
+ * @class Datapoint
+ * @param {Object} options
+ * @constructor
+ */
 var Datapoint = function(options) {
     _.extend(this, defaults, options);
 };
