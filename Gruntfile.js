@@ -58,9 +58,9 @@ module.exports = function(grunt) {
     });
 
     // Default task(s).
-    grunt.registerTask('default', ['jshint', 'mochaTest:default']);
-    grunt.registerTask('unit', ['mochaTest:unitOnly']);
-    grunt.registerTask('coverage', ['instrument', 'mochaTest:default', 'mochaTest:coverage']);
-    grunt.registerTask('docs', ['jsduck']);
+    grunt.registerTask('default', 'Run jshint and unit tests', ['jshint', 'mochaTest:default']);
+    grunt.registerTask('unit', 'Run unit tests only, but with verbose output', ['mochaTest:unitOnly']);
+    grunt.registerTask('coverage', 'Run tests and create code coverage', ['instrument', 'mochaTest:default', 'mochaTest:coverage']);
+    grunt.registerTask('docs', 'Create API documentation', ['jsduck']);
 
 };
