@@ -296,8 +296,8 @@ describe('Message', function() {
             originMock = sinon.mock(origin),
             destMock   = sinon.mock(dest);
             
-        expected = [0xbc, 0x13, 0x1a, 0x22, 0x9b, 0xe0, 0x00, 0x81, 0x92];
-            
+        expected = [0xbc, 0xe0, 0x13, 0x1a, 0x22, 0x9b, 0x01, 0x00, 0x81];
+
         msg.setDestination(dest);
         msg.setOrigin(origin);
         msg.setData([0x01]);
@@ -310,23 +310,17 @@ describe('Message', function() {
         originMock
             .expects('getRaw')
             .once()
-            .returns([expected[1], expected[2]]); // 4/2'155
+            .returns([expected[2], expected[3]]);
             
         destMock
             .expects('getRaw')
             .once()
-            .returns([expected[3], expected[4]]); // 4/2/155
+            .returns([expected[4], expected[5]]);
             
         msgMock
             .expects('getDafRoutingLengthByte')
             .once()
-            .returns(expected[5]);
-            
-        msgMock
-            .expects('createParityByte')
-            .once()
-            .withArgs(expected.slice(0,8))
-            .returns(expected[8]);
+            .returns(expected[1]);
         
         result = msg.toArray();
                 
@@ -344,8 +338,8 @@ describe('Message', function() {
             var msg = new Message(),
                 raw = msg.toArray();
 
-            assert.deepEqual(raw.slice(1,3), [0x00, 0x00], "origin is correct");
-            assert.deepEqual(raw.slice(3,5), [0x00, 0x00], "destination is correct");
+            assert.deepEqual(raw.slice(2,4), [0x00, 0x00], "origin is correct");
+            assert.deepEqual(raw.slice(4,6), [0x00, 0x00], "destination is correct");
         });
 
     });
@@ -353,25 +347,25 @@ describe('Message', function() {
     describe('.parse()', function() {
 
         it('parses array of bytes into message object', function() {
-            var data = [0xb4, 0xd0, 0x11, 0x04, 0x0a, 0x27, 0x01, 0x00, 0x81],
+            var data = [0xb4, 0xd0, 0x11, 0x04, 0x0a, 0x07, 0x01, 0x00, 0x81],
                 msg = Message.parse(data);
 
-            assert.ok(msg.isRepeated());
+            assert.ok(!msg.isRepeated());
             assert.equal(msg.getPriority(), "high");
-            assert.equal(msg.getRoutingCounter(), 2);
+            assert.equal(msg.getRoutingCounter(), 5);
 
-            assert.deepEqual(msg._origin.toString(), '13.0.17');
-            assert.deepEqual(msg._destination.toString(), '0/4/10');
+            assert.deepEqual(msg._origin.toString(), '1.1.4');
+            assert.deepEqual(msg._destination.toString(), '1/2/7');
 
-            assert.deepEqual(msg._data, [0x00]);
+            assert.deepEqual(msg._data, [0x01]);
 
         });
 
         it('parses bytes from an example into correct message object', function() {
-            var data = [0xbc, 0x11, 0x02, 0x10, 0x00, 0xe1, 0x00, 0x81, 0x20],
+            var data = [0xbc, 0xe1, 0x11, 0x02, 0x10, 0x00, 0x01, 0x00, 0x81],
                 msg = Message.parse(data);
 
-            assert.ok(msg.isRepeated());
+            assert.ok(!msg.isRepeated());
             assert.equal(msg.getPriority(), "normal");
             assert.equal(msg.getRoutingCounter(), 6);
 
@@ -383,15 +377,8 @@ describe('Message', function() {
         });
 
         it('parses bytes with 8 bit data into correct message', function() {
-            var data = [0xbc, 0x11, 0x02, 0x10, 0x00, 0xe1, 0x00, 0x80, 0xaa, 0x20],
+            var data = [0xbc, 0xe1, 0x11, 0x02, 0x10, 0x00, 0x02, 0x00, 0x80, 0xaa],
                 msg = Message.parse(data);
-
-            assert.ok(msg.isRepeated());
-            assert.equal(msg.getPriority(), "normal");
-            assert.equal(msg.getRoutingCounter(), 6);
-
-            assert.deepEqual(msg._origin.toString(), '1.1.2');
-            assert.deepEqual(msg._destination.toString(), '2/0/0');
 
             assert.deepEqual(msg._data, [0xaa]);
             assert.deepEqual(msg._command, 2);

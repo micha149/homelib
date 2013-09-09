@@ -159,6 +159,15 @@ Message.prototype.setOrigin = function(address) {
     return this;
 };
 
+/**
+ * Returns origin address of this message
+ *
+ * @returns {PhysicalAddress}
+ */
+Message.prototype.getOrigin = function() {
+    return this._origin;
+}
+
 Message.prototype.getRoutingCounter = function() {
     return this._routingCounter;
 };
@@ -265,14 +274,15 @@ Message.prototype.getDataBytes = function() {
 Message.prototype.toArray = function() {
     var raw = [],
         origin = this._origin ? this._origin.getRaw() : [0, 0],
-        destination = this._destination ? this._destination.getRaw() : [0, 0];
+        destination = this._destination ? this._destination.getRaw() : [0, 0],
+        data = this.getDataBytes();
 
     raw.push(this.getControlByte());
+    raw.push(this.getDafRoutingLengthByte());
     raw.push.apply(raw, origin);
     raw.push.apply(raw, destination);
-    raw.push(this.getDafRoutingLengthByte());
-    raw.push.apply(raw, this.getDataBytes());
-    raw.push(this.createParityByte(raw));
+    raw.push(data.length - 1);
+    raw.push.apply(raw, data);
     
     return raw;
 };
@@ -286,13 +296,13 @@ Message.prototype.toArray = function() {
  */
 Message.parse = function(data) {
     var msg     =  new Message(),
-        payload = data.slice(6, -1);
+        payload = data.slice(7);
 
     msg._priority = (data[0] & 12) >> 2;
-    msg._repeated = (data[0] & 32) === 32;
-    msg._routingCounter = (data[5] & 112) >> 4;
-    msg._origin = new PhysicalAddress([data[1], data[2]]);
-    msg._destination = new GroupAddress([data[3], data[4]], 3);
+    msg._repeated = (data[0] & 32) === 0;
+    msg._routingCounter = (data[1] & 112) >> 4;
+    msg._origin = new PhysicalAddress([data[2], data[3]]);
+    msg._destination = new GroupAddress([data[4], data[5]], 3);
     msg._command = (payload[0] & 3) << 2 | (payload[1] & 192) >> 6;
 
     if (payload.length === 2) {
