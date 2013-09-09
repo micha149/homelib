@@ -166,7 +166,7 @@ Message.prototype.setOrigin = function(address) {
  */
 Message.prototype.getOrigin = function() {
     return this._origin;
-}
+};
 
 Message.prototype.getRoutingCounter = function() {
     return this._routingCounter;
