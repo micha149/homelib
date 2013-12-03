@@ -1,10 +1,14 @@
-var assert          = require('assert'),
-    sinon           = require('sinon'),
+var assert  = require('assert'),
+    sinon   = require('sinon'),
+    chai    = require('chai'),
+    expect  = chai.expect,
     homelib         = require('../'),
     Message         = homelib.Message,
     GroupAddress    = homelib.GroupAddress,
     PhysicalAddress = homelib.PhysicalAddress,
     Datapoint       = homelib.Datapoint;
+
+chai.use(require('./helpers/byteAssertions'));
     
 describe('Message', function() {
 
@@ -365,23 +369,30 @@ describe('Message', function() {
             var data = [0xbc, 0xe1, 0x11, 0x02, 0x10, 0x00, 0x01, 0x00, 0x81],
                 msg = Message.parse(data);
 
-            assert.ok(!msg.isRepeated());
-            assert.equal(msg.getPriority(), "normal");
-            assert.equal(msg.getRoutingCounter(), 6);
+            expect(msg.isRepeated()).to.be.false;
+            expect(msg.getPriority()).to.be.equal("normal");
+            expect(msg.getRoutingCounter()).to.be.equal(6);
 
-            assert.deepEqual(msg._origin.toString(), '1.1.2');
-            assert.deepEqual(msg._destination.toString(), '2/0/0');
+            expect(msg._origin.toString()).to.be.equal('1.1.2');
+            expect(msg._destination.toString()).to.be.equal('2/0/0');
 
-            assert.deepEqual(msg._data, [0x01]);
-            assert.deepEqual(msg._command, 2);
+            expect(msg._data).to.have.bytes([0x01]);
+            expect(msg.getCommand()).to.be.equal('write');
         });
 
         it('parses bytes with 8 bit data into correct message', function() {
             var data = [0xbc, 0xe1, 0x11, 0x02, 0x10, 0x00, 0x02, 0x00, 0x80, 0xaa],
                 msg = Message.parse(data);
 
-            assert.deepEqual(msg._data, [0xaa]);
-            assert.deepEqual(msg._command, 2);
+            expect(msg.isRepeated()).not.to.be.ok;
+            expect(msg.getPriority()).to.be.equal("normal");
+            expect(msg.getRoutingCounter()).to.be.equal(6);
+
+            expect(msg._origin.toString()).to.be.equal('1.1.2');
+            expect(msg._destination.toString()).to.be.equal('2/0/0');
+
+            expect(msg._data).to.have.bytes([0xaa]);
+            expect(msg._command).to.be.equal(2);
         });
 
     });

@@ -3,7 +3,7 @@ var GroupAddress    = require('./GroupAddress.js'),
 
 /**
  * The Message class indicates all data of a bus telegram. This implementation
- * is based on a handout of Nowakowski from May the 18th 2004
+ * is based on the standard cemi message frame
  *
  * @constructor
  */
@@ -20,7 +20,7 @@ function Message () {
 /**
  * Set the command for this message
  *
- * @param     {"read"|"write"|"answer"} command COmmand name
+ * @param     {"read"|"write"|"answer"} command Command name
  * @return    {Message} this
  * @chainable
  */
@@ -296,6 +296,7 @@ Message.prototype.toArray = function() {
  */
 Message.parse = function(data) {
     var msg     =  new Message(),
+        dataLength = data[6],
         payload = data.slice(7);
 
     msg._priority = (data[0] & 12) >> 2;
@@ -305,7 +306,7 @@ Message.parse = function(data) {
     msg._destination = new GroupAddress([data[4], data[5]], 3);
     msg._command = (payload[0] & 3) << 2 | (payload[1] & 192) >> 6;
 
-    if (payload.length === 2) {
+    if (dataLength <= 1) {
         msg._data = [payload[1] & 63];
     } else {
         msg._data = payload.slice(2);
