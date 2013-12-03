@@ -10,6 +10,7 @@ var Packet = require('./Packet.js'),
  * {@img knx_ip_tunneling_request.png Schema of a knx ip tunneling request}
  *
  * @class Driver.KnxIp.TunnelingRequest
+ * @extends Driver.KnxIp.Packet
  * @param {Number} channelId
  * @param {Number} sequence Next sequence count
  * @param {Message} message
