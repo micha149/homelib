@@ -46,9 +46,17 @@ module.exports = function(grunt) {
             }
         },
 
+        watch: {
+            scripts: {
+                files: ['src/**/*.js', 'test/**/*Test.js'],
+                tasks: ['unit']
+            }
+        },
+
         clean: ['docs/output']
     });
 
+    grunt.loadNpmTasks('grunt-contrib-watch');
     grunt.loadNpmTasks('grunt-contrib-jshint');
     grunt.loadNpmTasks('grunt-contrib-clean');
     grunt.loadNpmTasks('grunt-mocha-test');
