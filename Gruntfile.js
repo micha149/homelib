@@ -16,7 +16,7 @@ module.exports = function(grunt) {
                 options: {
                     reporter: 'dot'
                 },
-                src: ['test/**/*.js']
+                src: ['test/**/*Test.js']
             },
             unitOnly: {
                 options: {
@@ -30,7 +30,7 @@ module.exports = function(grunt) {
                     quiet: true,
                     captureFile: 'coverage.html'
                 },
-                src: ['test/**/*.js']
+                src: ['test/**/*Test.js']
             }
         },
 
