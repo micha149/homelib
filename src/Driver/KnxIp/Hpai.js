@@ -28,6 +28,14 @@ function Hpai(address, port) {
     this.port = port;
 }
 
+Hpai.prototype.getAddress = function() {
+    return this.address;
+};
+
+Hpai.prototype.getPort = function() {
+    return this.port;
+};
+
 Hpai.prototype._assertAddress = function (address) {
     return (typeof address === "string") && address.match(IPADDR);
 };
