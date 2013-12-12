@@ -5,7 +5,7 @@ var chai = require('chai'),
     homelib = require('../../../homelib'),
     KnxIp  = homelib.Driver.KnxIp;
 
-describe.only("ConnectionResponse", function() {
+describe("ConnectionResponse", function() {
 
     beforeEach(function() {
         this.channelId = 73;
