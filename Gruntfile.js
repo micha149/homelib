@@ -14,19 +14,22 @@ module.exports = function(grunt) {
         mochaTest: {
             default: {
                 options: {
-                    reporter: 'dot'
+                    reporter: 'dot',
+                    require: "test/setup.js"
                 },
                 src: ['test/**/*Test.js']
             },
             unitOnly: {
                 options: {
-                    reporter: 'spec'
+                    reporter: 'spec',
+                    require: "test/setup.js"
                 },
                 src: ['test/**/*Test.js']
             },
             coverage: {
                 options: {
                     reporter: 'html-cov',
+                    require: "test/setup.js",
                     quiet: true,
                     captureFile: 'coverage.html'
                 },

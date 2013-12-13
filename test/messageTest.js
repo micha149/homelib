@@ -7,8 +7,6 @@ var assert  = require('assert'),
     GroupAddress    = homelib.GroupAddress,
     PhysicalAddress = homelib.PhysicalAddress,
     Datapoint       = homelib.Datapoint;
-
-chai.use(require('./helpers/byteAssertions'));
     
 describe('Message', function() {
 
