@@ -191,6 +191,8 @@ Packet.factory = function(buffer) {
             return require('./TunnelingRequest.js').parse(buffer);
         case 0x0206:
             return require('./ConnectionResponse.js').parse(buffer);
+        case 0x0207:
+            return require('./ConnectionStateRequest.js').parse(buffer);
         case 0x0421:
             return require('./TunnelingAck.js').parse(buffer);
         default:
