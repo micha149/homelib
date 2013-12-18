@@ -189,6 +189,8 @@ Packet.factory = function(buffer) {
     switch(serviceType) {
         case 0x0420:
             return require('./TunnelingRequest.js').parse(buffer);
+        case 0x0206:
+            return require('./ConnectionResponse.js').parse(buffer);
         case 0x0421:
             return require('./TunnelingAck.js').parse(buffer);
         default:
