@@ -1,6 +1,6 @@
 {
     "--title": "Homelib API documentation",
-    "--warnings": ["-link", "-no_doc"],
+    "--warnings": ["-link", "-nodoc(class,public)"],
     "--categories": "categories.json",
     "--images": "images/",
     "--external": [
