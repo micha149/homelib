@@ -13,10 +13,34 @@ function DriverInterface() {}
 
 util.inherits(DriverInterface, events.EventEmitter);
 
-DriverInterface.prototype.connect = function(options) {};
+/**
+ * Fires a message event if a request from the bus was received
+ *
+ * @event message
+ * @param {Message} message Message object
+ */
 
+/**
+ * Fired if the driver has connected to the remote interface
+ *
+ * @event connected
+ */
+
+/**
+ * Opens a connection to the remote interface
+ */
+DriverInterface.prototype.connect = function() {};
+
+/**
+ * Returns true if the driver is connected to the remote
+ * @returns {Boolean}
+ */
 DriverInterface.prototype.isConnected = function() {};
 
+/**
+ * Sends a message to the bus
+ * @param {Message} msg
+ */
 DriverInterface.prototype.send = function(msg) {};
 
 module.exports = DriverInterface;

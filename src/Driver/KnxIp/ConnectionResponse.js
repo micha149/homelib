@@ -86,7 +86,7 @@ ConnectionResponse.prototype.getData = function() {
 /**
  * Parses a buffer to an instance of ConnectionResponse
  *
- * @param {Buffer} buf
+ * @param {buffer.Buffer|Array} buf
  * @returns {Driver.KnxIp.ConnectionResponse}
  */
 ConnectionResponse.parse = function(buf) {

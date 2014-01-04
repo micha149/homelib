@@ -58,7 +58,7 @@ ConnectionStateRequest.prototype.getData = function() {
 /**
  * Parses a buffer to an instance of ConnectionStateRequest
  *
- * @param {Buffer} buf
+ * @param {buffer.Buffer|Array} buf
  * @returns {Driver.KnxIp.ConnectionStateRequest}
  */
 ConnectionStateRequest.parse = function(buf) {
