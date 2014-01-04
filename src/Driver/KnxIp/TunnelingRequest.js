@@ -1,5 +1,5 @@
 var Packet = require('./Packet.js'),
-    Message = require('../../Message.js'),
+    Cemi = require('./Cemi'),
     util   = require('util');
 
 /**
@@ -13,14 +13,14 @@ var Packet = require('./Packet.js'),
  * @extends Driver.KnxIp.Packet
  * @param {Number} channelId
  * @param {Number} sequence Next sequence count
- * @param {Message} message
+ * @param {Driver.KnxIp.Cemi} cemi
  * @constructor
  */
-function TunnelingRequest(channelId, sequence, message) {
+function TunnelingRequest(channelId, sequence, cemi) {
     this._serviceType = 0x0420;
     this._channelId = channelId;
     this._sequence = sequence;
-    this._message = message;
+    this._cemi = cemi;
 }
 
 util.inherits(TunnelingRequest, Packet);
@@ -33,7 +33,7 @@ TunnelingRequest.prototype.getData = function() {
         0 // reserved
     ];
 
-    return header.concat(this._message.toArray());
+    return header.concat(this._cemi.toArray());
 };
 
 TunnelingRequest.prototype.getChannelId = function() {
@@ -44,15 +44,14 @@ TunnelingRequest.prototype.getSequence = function() {
     return this._sequence;
 };
 
-TunnelingRequest.prototype.getMessage = function() {
-    return this._message;
+TunnelingRequest.prototype.getCemi = function() {
+    return this._cemi;
 };
 
 TunnelingRequest.parse = function(buffer) {
     var channelId = buffer[7],
         sequence = buffer[8],
-        additionalInfoLength = buffer[11],
-        msg = Message.parse(buffer.slice(12 + additionalInfoLength));
+        msg = Cemi.parse(buffer.slice(10));
 
     return new TunnelingRequest(channelId, sequence, msg);
 };

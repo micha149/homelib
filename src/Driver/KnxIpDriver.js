@@ -3,17 +3,10 @@ var util     = require('util'),
     dgram    = require('dgram'),
     defaults = require('underscore').defaults,
     KnxIp    = require('./KnxIp'),
+    Message  = require('../Message'),
     Log      = require('../Log'),
+    async    = require('async'),
     ConnectionRequest = KnxIp.ConnectionRequest;
-
-// Driver statuses
-var STATUS_CLOSED     = 'closed',
-    STATUS_CONNECTING = 'connecting',
-    STATUS_OPEN_IDLE  = 'open_idle';
-
-// Switched light on: 06 10 04 20 00 15 04 01 00 00 29 00 bc d0 11 04 0a 07 01 00 81
-// Server disconnects: 06 10 02 09 00 10 01 00 08 01 c0 a8 38 65 0e 57
-
 
 /**
  * Driver to connect an knx ip interface.
@@ -28,141 +21,217 @@ function KnxIpDriver(options) {
 
     events.EventEmitter.apply(this, arguments);
 
-    this.options = defaults(options || {}, {
-        /**
-         * IP-Address for the local endpoint. Leave empty to listen on all devices.
-         * @cfg {String}
-         */
-        localAddress: null,
-
-        /**
-         * Port number for the local endpoint
-         * @cfg {String}
-         */
-        localPort: 3672,
-
-        /**
-         * IP-Address for the remote endpoint
-         * @cfg {String}
-         */
-        remoteAddress: undefined,
-
-        /**
-         * Port number for the remote endpoint
-         * @cfg {String}
-         */
+    /**
+     * Driver options
+     *
+     * @property {Object} _options
+     * @private
+     */
+    this._options = defaults(options || {}, {
         remotePort: 3671,
-
-        /**
-         * Logger instance for log messages
-         * @cfg {Log.LoggerInterface}
-         */
-        logger: new Log.NullLogger(),
-
-        /**
-         * Number of max repeats if the expected answer is not returned
-         * @cfg {Number}
-         */
-        maxRepeats: 6
+        maxRepeats: 6,
+        logger: undefined
     });
 
-    if(!this.options.remoteAddress) {
-        throw new Error('KnxIpDriver needs a remote address');
+    if (!this._options.localAddress) {
+        throw Error('Missing option "localAddress" to create KnxIpDriver');
     }
 
-    this._log = this.options.logger;
+    if (!this._options.remoteAddress) {
+        throw Error('Missing option "remoteAddress" to create KnxIpDriver');
+    }
 
-    this._status = KnxIpDriver.STATUS_CLOSED;
+    /**
+     * If the driver is currently connected to remote
+     * @type {boolean} _isConnected
+     * @private
+     */
+    this._isConnected = false;
+
+    /**
+     * Current Channel ID
+     * @type {Number}
+     * @private
+     */
+    this._channelId = undefined;
+
+    /**
+     * Last sequence number
+     * @type {Number}
+     * @private
+     */
+    this._sequence = 0;
+
+    /**
+     * Logger instance
+     * @type {Log.LoggerInterface}
+     * @private
+     */
+    this._logger = this._options.logger || new Log.NullLogger();
 
     this.on('packet', this._onPacket.bind(this));
 }
-
 util.inherits(KnxIpDriver, events.EventEmitter);
 
 /**
- * Current driver status
+ * Fires a message event if a request from the bus was received
  *
- * @property {String} _status
- * @private
+ * @event message
+ * @param {Message} message Message object
  */
 
 /**
- * UDP/Datagram socket instance.
- *
- * See [nodejs docs][1]
- * for further informations.
- *
- * [1]: http://nodejs.org/api/dgram.html#dgram_class_dgram_socket
- *
- * @property {dgram.Socket} _socket
- * @private
- */
-
-/**
- * ID of the connection channel
- *
- * This ID will be assigned by the remote host with the connection response.
- *
- * @property {Number} _channelId
- * @private
- */
-
-/**
- * Next sequence number
- *
- * This is needed for each sent packet. It will be used to validate the packet
- * sequence. Its an number between 0 and 255 and will be raised for each packet.
- * If 255 is reached, it will be resetted to 0.
- *
- * @property {Number} _sequenceNumber
- * @private
- */
-
-/**
- * Fired when the connection was established
+ * Fired if the driver has connected to the remote interface
  *
  * @event connected
  */
 
 /**
- * Fired when a packet was received
+ * Fires a packet event for each received knxip packet
  *
  * @event packet
- * @param {Driver.KnxIp.Packet} packet The received packet
+ * @private
+ * @param {Driver.KnxIp.Packet} packet Packet object
  */
 
 /**
- * Fired when a packet with a bus message was received
- *
- * @event message
- * @param {Message} message The received message
- */
-
-/**
- * Opens the connection to the remote host
+ * @inheritDoc Driver.DriverInterface
  */
 KnxIpDriver.prototype.connect = function() {
+    var self = this,
+        options = self._options;
 
-    var socket,
-        self    = this,
-        options = this.options,
-        request = this._createConnectionRequest();
+    async.parallel([
+        self._createAndBindSocket.bind(self),
+        self._createAndBindSocket.bind(self)
+    ], function(err, sockets) {
 
-    this._status = STATUS_CONNECTING;
+        var connectionRequest;
 
-    this._socket = socket = dgram.createSocket('udp4');
-    socket.bind(options.localPort, options.localAddress);
-    socket.on('message', this._onSocketMessage.bind(this));
+        self._connectionSocket = sockets[0];
+        self._dataSocket = sockets[1];
 
-    this._log.info('Connecting to ' + options.remoteAddress + ':' + options.remotePort);
+        connectionRequest = self._createConnectionRequest();
 
-    this._sendAndExpect(request, 'connection.response', function(packet) {
-        var data = packet.getData();
-        self._channelId = data[0];
-        self._status = STATUS_OPEN_IDLE;
-        self.emit('connected');
-        this._log.info('Response received from ' + data[4] + "." + data[5] + "." + data[6] + "." + data[7] + ":" + ((data[8] << 8) + data[9]));
+        self._sendAndExpect(connectionRequest, 'connection.response', function(response) {
+            self._channelId = response.getChannelId();
+            self._sequence = 0;
+            self._isConnected = true;
+            self.emit('connected', response);
+        });
     });
+};
+
+/**
+ * @inheritDoc Driver.DriverInterface
+ */
+KnxIpDriver.prototype.isConnected = function() {
+    return this._isConnected;
+};
+
+/**
+ * @inheritDoc Driver.DriverInterface
+ */
+KnxIpDriver.prototype.send = function(message) {
+    if (!this.isConnected()) {
+        throw new Error('Can not send messages while driver is not connected');
+    }
+
+    var cemi = new KnxIp.Cemi('L_Data.req', message),
+        request = new KnxIp.TunnelingRequest(this._channelId, this._sequence++, cemi);
+
+    this._socketSend(request);
+};
+
+/**
+ * Returns object with current driver options
+ *
+ * @returns {Object}
+ */
+KnxIpDriver.prototype.getOptions = function() {
+    return this._options;
+};
+
+/**
+ * Creates an new udp4 socket and bind it to all devices on an empty port
+ *
+ * @private
+ * @return {dgram.Socket}
+ */
+KnxIpDriver.prototype._createAndBindSocket = function(callback) {
+    var socket = dgram.createSocket('udp4');
+    socket.on('message', this._onSocketMessage.bind(this));
+    socket.bind(null, function() {
+        callback(null, socket);
+    });
+    return socket;
+};
+
+/**
+ * Triggered if data or control socket receives data. The received data is passed to
+ * this callback and will be parsed into a knx/ip packet. After this, the #packet event
+ * is triggered and the parsed packet is passed to bound callbacks.
+ *
+ * @param {buffer.Buffer} buffer
+ * @private
+ */
+KnxIpDriver.prototype._onSocketMessage = function(buffer) {
+    var packet;
+
+    try {
+        packet = KnxIp.Packet.factory(buffer);
+    } catch (e) {}
+
+    if (packet) {
+        this._logger.debug('recv: ', packet);
+        this.emit('packet', packet);
+    }
+};
+
+/**
+ * Triggered when socket messages were parsed to packets. The packet is passed to the
+ * event callbacks.
+ *
+ * @param {Driver.KnxIp.Packet} packet
+ * @private
+ */
+KnxIpDriver.prototype._onPacket = function(packet) {
+
+    var self = this,
+        cemi;
+
+    if (packet instanceof KnxIp.TunnelingRequest) {
+
+        cemi = packet.getCemi();
+
+        this._socketSend(new KnxIp.TunnelingAck(
+            packet.getChannelId(),
+            packet.getSequence()
+        ));
+
+        if(cemi && cemi.getMessageCode() !== "L_Data.con") {
+            this._confirmMessage(cemi, packet.getSequence(), function() {
+                self._sequence = packet.getSequence() + 1;
+                self.emit('message', cemi.getMessage());
+            });
+        }
+    }
+};
+
+/**
+ * Sends a repeated message back to the remote to confirm the retrieval.
+ *
+ * @param {Driver.KnxIp.Cemi} original
+ * @param {Function} callback
+ * @private
+ */
+KnxIpDriver.prototype._confirmMessage = function(original, sequence, callback) {
+    var clone = KnxIp.Cemi.parse(original.toArray()),
+        request = new KnxIp.TunnelingRequest(this._channelId, sequence, clone);
+
+    clone.setMessageCode("L_Data.con");
+
+    this._sendAndExpect(request, 'tunneling.ack', callback);
 };
 
 /**
@@ -172,10 +241,13 @@ KnxIpDriver.prototype.connect = function() {
  * @private
  */
 KnxIpDriver.prototype._createConnectionRequest = function() {
-    var options = this.options;
-    return new ConnectionRequest(
-        new KnxIp.Hpai(options.localAddress, options.localPort),
-        new KnxIp.Hpai(options.localAddress, options.localPort)
+    var options = this._options,
+        connectionPort = this._connectionSocket.address().port,
+        dataPort = this._dataSocket.address().port;
+
+    return new KnxIp.ConnectionRequest(
+        new KnxIp.Hpai(options.localAddress, connectionPort),
+        new KnxIp.Hpai(options.localAddress, dataPort)
     );
 };
 
@@ -190,13 +262,12 @@ KnxIpDriver.prototype._createConnectionRequest = function() {
  */
 KnxIpDriver.prototype._sendAndExpect = function(packet, expectedService, callback) {
     var self = this,
-        options = this.options,
-        buffer = packet.toBuffer(),
+        options = this._options,
         repeatsLeft = options.maxRepeats,
         timeout;
 
     function checkMaxAttempsAndResend () {
-        self._socketSend(buffer);
+        self._socketSend(packet);
         --repeatsLeft;
         if (repeatsLeft > 0) {
             timeout = setTimeout(checkMaxAttempsAndResend, 1000);
@@ -218,73 +289,42 @@ KnxIpDriver.prototype._sendAndExpect = function(packet, expectedService, callbac
 };
 
 /**
- * Send the given buffer to the remote host
+ * Starts the heartbeat to keep connection alive
  *
- * @param {buffer.Buffer} buffer Data to send
  * @private
  */
-KnxIpDriver.prototype._socketSend = function(buffer) {
-    var socket = this._socket,
-        options = this.options;
+KnxIpDriver.prototype._startHeartbeat = function() {
+//    var stateRequest = new KnxIp.ConnectionStateRequest(
+//        this._channelId,
+//        new KnxIp.Hpai(options.localAddress, this._connectionSocket.address().port)
+//    );
+//
+//    this._sendAndExpect(stateRequest, 'connectionstate.response', function(){
+//
+//    });
+};
+
+/**
+ * Send the given packet to the remote host
+ *
+ * @param {Driver.KnxIp.Packet} packet Packet to send
+ * @private
+ */
+KnxIpDriver.prototype._socketSend = function(packet) {
+    var socket,
+        options = this._options,
+        buffer = packet.toBuffer();
+
+    if (packet instanceof KnxIp.TunnelingRequest ||
+            packet instanceof KnxIp.TunnelingAck) {
+        socket = this._dataSocket;
+    } else {
+        socket = this._connectionSocket;
+    }
+
+    this._logger.debug('send: ', packet);
 
     socket.send(buffer, 0, buffer.length, options.remotePort, options.remoteAddress);
-};
-
-/**
- * Executed if socket receives a message. This method will try to translate the message
- * into a packet. If this succeed, a #packet event will be emitted.
- *
- * @param {buffer.Buffer} data
- * @fires packet
- * @private
- */
-KnxIpDriver.prototype._onSocketMessage = function(data) {
-    var packet;
-
-    try {
-        packet = KnxIp.Packet.factory(data);
-    } catch (e) {
-        this._log.warning("Received buffer can't be converted to packet", data);
-        return;
-    }
-
-    this.emit('packet', packet);
-};
-
-/**
- *
- * @param {Driver.KnxIp.Packet} packet
- * @fires message
- * @private
- */
-KnxIpDriver.prototype._onPacket = function(packet) {
-    var response;
-
-    if (this.isConnected()) {
-        if (packet instanceof KnxIp.TunnelingRequest) {
-            response = new KnxIp.TunnelingAck(this._channelId, packet.getSequence());
-            this._socketSend(response.toBuffer());
-            this.emit('message', packet.getMessage());
-        }
-    }
-};
-
-/**
- * Returns if the driver is connected to an ip interface or not.
- *
- * @returns {Boolean}
- */
-KnxIpDriver.prototype.isConnected = function() {
-    return this._status === STATUS_OPEN_IDLE;
-};
-
-/**
- * Send a message to the connected ip interface
- *
- * @param {Message} msg
- */
-KnxIpDriver.prototype.send = function(msg) {
-
 };
 
 module.exports = KnxIpDriver;

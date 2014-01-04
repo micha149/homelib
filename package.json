@@ -9,7 +9,8 @@
         "url": "https://github.com/micha149/homelib.git"
     },
     "dependencies": {
-        "underscore": "1.5.x"
+        "underscore": "1.5.x",
+        "async": "~0.2.9"
     },
     "devDependencies": {
         "sinon": ">=1.6.0",

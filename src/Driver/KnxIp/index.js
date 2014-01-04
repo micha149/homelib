@@ -1,4 +1,5 @@
 module.exports = {
+    Cemi: require("./Cemi.js"),
     ConnectionRequest: require("./ConnectionRequest.js"),
     ConnectionResponse: require("./ConnectionResponse.js"),
     ConnectionStateRequest: require("./ConnectionStateRequest.js"),
