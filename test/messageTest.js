@@ -98,8 +98,7 @@ describe('Message', function() {
         
         it('accepts instances of GroupAddress', function() {
             var msg = new Message(),
-                dpt = new Datapoint(),
-                adr = new GroupAddress('1/2/3', dpt);
+                adr = sinon.createStubInstance(GroupAddress);
                 
             msg.setDestination(adr);
             
@@ -120,8 +119,7 @@ describe('Message', function() {
     describe('.getDestination()', function() {
         it ('returns destination address of message', function() {
             var msg = new Message(),
-                dpt = new Datapoint(),
-                adr = new GroupAddress('1/2/3', dpt);
+                adr = sinon.createStubInstance(GroupAddress);
 
             msg.setDestination(adr);
 
@@ -133,7 +131,7 @@ describe('Message', function() {
         
         it('accepts only instances of PhysicalAddress', function() {
             var msg = new Message(),
-                adr = new PhysicalAddress('1.2.3');
+                adr = sinon.createStubInstance(PhysicalAddress);
                 
             msg.setOrigin(adr);
             
@@ -142,8 +140,7 @@ describe('Message', function() {
         
         it('throws an error on other types', function() {
             var msg = new Message(),
-                dpt = new Datapoint(),
-                adr = new GroupAddress('1/2/3', dpt);
+                adr = sinon.createStubInstance(GroupAddress);
                 
             assert.throws(function() {
                 msg.setOrigin(adr);
