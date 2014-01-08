@@ -1,0 +1,145 @@
+[{
+    "id": "1.001",
+    "name": "DPT_Switch",
+    "type": "PDT_BINARY_INFORMATION",
+    "valueMap": {
+        "0": "Off",
+        "1": "On"
+    }
+}, {
+    "id": "1.002",
+    "name": "DPT_Bool",
+    "type": "PDT_BINARY_INFORMATION",
+    "valueMap": {
+        "0": false,
+        "1": true
+    }
+}, {
+    "id": "1.003",
+    "name": "DPT_Enable",
+    "type": "PDT_BINARY_INFORMATION",
+    "valueMap": {
+        "0": "Disable",
+        "1": "Enable"
+    }
+}, {
+    "id": "1.004",
+    "name": "DPT_Ramp",
+    "type": "PDT_BINARY_INFORMATION",
+    "valueMap": {
+        "0": "No Ramp",
+        "1": "Ramp"
+    }
+}, {
+    "id": "1.005",
+    "name": "DPT_Alarm",
+    "type": "PDT_BINARY_INFORMATION",
+    "valueMap": {
+        "0": "No Alarm",
+        "1": "Alarm"
+    }
+}, {
+    "id": "1.006",
+    "name": "DPT_BinaryValue",
+    "type": "PDT_BINARY_INFORMATION",
+    "valueMap": {
+        "0": "Low",
+        "1": "High"
+    }
+}, {
+    "id": "1.007",
+    "name": "DPT_Step",
+    "type": "PDT_BINARY_INFORMATION",
+    "valueMap": {
+        "0": "Decrease",
+        "1": "Increase"
+    }
+}, {
+    "id": "1.008",
+    "name": "DPT_UpDown",
+    "type": "PDT_BINARY_INFORMATION",
+    "valueMap": {
+        "0": "Up",
+        "1": "Down"
+    }
+}, {
+    "id": "1.009",
+    "name": "DPT_OpenClose",
+    "type": "PDT_BINARY_INFORMATION",
+    "valueMap": {
+        "0": "Open",
+        "1": "Close"
+    }
+}, {
+    "id": "1.010",
+    "name": "DPT_Start",
+    "type": "PDT_BINARY_INFORMATION",
+    "valueMap": {
+        "0": "Stop",
+        "1": "Start"
+    }
+}, {
+    "id": "1.011",
+    "name": "DPT_State",
+    "type": "PDT_BINARY_INFORMATION",
+    "valueMap": {
+        "0": "Inactive",
+        "1": "Active"
+    }
+}, {
+    "id": "1.012",
+    "name": "DPT_Invert",
+    "type": "PDT_BINARY_INFORMATION",
+    "valueMap": {
+        "0": "Not Inverted",
+        "1": "Inverted"
+    }
+}, {
+    "id": "1.013",
+    "name": "DPT_DimSendStyle",
+    "type": "PDT_BINARY_INFORMATION",
+    "valueMap": {
+        "0": "Start/Stop",
+        "1": "Cyclically"
+    }
+}, {
+    "id": "1.014",
+    "name": "DPT_InputSource",
+    "type": "PDT_BINARY_INFORMATION",
+    "valueMap": {
+        "0": "Fixed",
+        "1": "Calculated"
+    }
+}, {
+    "id": "1.015",
+    "name": "DPT_Reset",
+    "type": "PDT_BINARY_INFORMATION",
+    "valueMap": {
+        "0": "no action",
+        "1": "reset command"
+    }
+}, {
+    "id": "1.016",
+    "name": "DPT_Ack",
+    "type": "PDT_BINARY_INFORMATION",
+    "valueMap": {
+        "0": "no action",
+        "1": "acknowledge command"
+    }
+}, {
+    "id": "1.017",
+    "name": "DPT_Trigger",
+    "type": "PDT_BINARY_INFORMATION",
+    "valueMap": {
+        "0": "trigger",
+        "1": "trigger"
+    }
+}, {
+    "id": "1.018",
+    "name": "DPT_Occupancy",
+    "type": "PDT_BINARY_INFORMATION",
+    "valueMap": {
+        "0": "not occupied",
+        "1": "occupied"
+    }
+}]
