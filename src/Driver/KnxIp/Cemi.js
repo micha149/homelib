@@ -206,7 +206,7 @@ Cemi.parse = function(buffer) {
     message.setRepeated((buffer[2] & 32) === 0);
     message.setRoutingCounter((buffer[3] & 112) >> 4);
     message.setOrigin(new PhysicalAddress([buffer[4], buffer[5]]));
-    message.setDestination(new GroupAddress([buffer[6], buffer[7]], 3));
+    message.setDestination(new GroupAddress([buffer[6], buffer[7]]));
 
     message.setCommand(messageCommandsInverted[(payload[0] & 3) << 2 | (payload[1] & 192) >> 6]);
 
