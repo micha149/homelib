@@ -50,17 +50,6 @@ describe('KnxIpDriver', function() {
             implements(this.driver, homelib.Driver.DriverInterface);
         });
 
-        it('throws error if local address is not set', function() {
-
-            function createInstanceWithMissingOption () {
-                var driver = new KnxIpDriver({
-                    remoteAddress: "192.168.0.10"
-                });
-            }
-
-            expect(createInstanceWithMissingOption).to.throw(Error, /Missing.*localAddress/);
-        });
-
         it('throws error if remote address is not set', function() {
 
             function createInstanceWithMissingOption () {
@@ -89,12 +78,80 @@ describe('KnxIpDriver', function() {
             connectionRequestStub = sinon.createStubInstance(KnxIp.ConnectionRequest);
             connectionRequestStub.toBuffer.returns(expectedRequest);
 
-           // sandbox.stub(this.driver, '_createConnectionRequest').returns(connectionRequestStub);
         });
 
         it('creates two sockets and bind them to remote', function() {
             this.driver.connect();
             expect(dgram.createSocket).calledTwice;
+        });
+
+        it('binds sockets to given local address', function() {
+            var driver = this.driver;
+
+            driver.connect();
+
+            expect(driver._dataSocket.bind).to.be.calledWith(null, "192.168.0.92");
+            expect(driver._dataSocket.bind).to.be.calledWith(null, "192.168.0.92");
+        });
+
+        it('binds socket to matching iface if no local address was provided', function() {
+            var expectedAddress = "10.0.1.123",
+                driver = new KnxIpDriver({remoteAddress: "10.0.1.10"});
+
+            sandbox.stub(require('os'), 'networkInterfaces').returns({
+                lo0: [
+                    { address: '::1', mask: 'ffff:ffff:ffff:ffff:0:0:0', family: 'IPv6', internal: true },
+                    { address: 'fe80::1', mask: 'ffff:ffff:ffff:ffff:0:0:0', family: 'IPv6', internal: true },
+                    { address: '127.0.0.1', mask: '255.255.255.0', family: 'IPv4', internal: true }
+                ],
+                en1: [
+                    { address: 'fe80::cabc:c8ff:feef:f996', family: 'IPv6', internal: false },
+                    { address: "10.0.5.123", family: 'IPv4', internal: false },
+                    { address: expectedAddress, family: 'IPv4', internal: false }
+                ]
+            });
+
+            driver.connect();
+
+            expect(driver._dataSocket.bind).to.be.calledWith(null, expectedAddress);
+            expect(driver._dataSocket.bind).to.be.calledWith(null, expectedAddress);
+        });
+
+        it('uses subnet mask of local interfaces if provided (>= node 0.11.2)', function() {
+            var expectedAddress = "10.0.5.123",
+                driver = new KnxIpDriver({remoteAddress: "10.0.1.10"});
+
+            sandbox.stub(require('os'), 'networkInterfaces').returns({
+                lo0: [
+                    { address: '::1', family: 'IPv6', internal: true },
+                    { address: 'fe80::1', family: 'IPv6', internal: true },
+                    { address: '127.0.0.1', family: 'IPv4', internal: true }
+                ],
+                en1: [
+                    { address: 'fe80::cabc:c8ff:feef:f996', mask: 'ffff:ffff:ffff:ffff:0:0:0', family: 'IPv6', internal: false },
+                    { address: expectedAddress, mask: '255.255.0.0', family: 'IPv4', internal: false },
+                    { address: "10.2.0.1", mask: '255.255.255.241', family: 'IPv4', internal: false }
+                ]
+            });
+
+            driver.connect();
+
+            expect(driver._dataSocket.bind).to.be.calledWith(null, expectedAddress);
+            expect(driver._dataSocket.bind).to.be.calledWith(null, expectedAddress);
+        });
+
+        it('throws error if no matching address is found', function() {
+            var driver = new KnxIpDriver({remoteAddress: "10.0.1.10"});
+
+            sandbox.stub(require('os'), 'networkInterfaces').returns({
+                en1: [
+                    { address: "10.2.0.1", mask: '255.255.255.0', family: 'IPv4', internal: false }
+                ]
+            });
+
+            expect(function() {
+                driver.connect();
+            }).to.Throw(Error);
         });
 
         it('listen to messages on sockets an triggers packet event', function() {

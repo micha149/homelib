@@ -1,7 +1,7 @@
 var util     = require('util'),
     events   = require('events'),
     dgram    = require('dgram'),
-    defaults = require('underscore').defaults,
+    _        = require('underscore'),
     KnxIp    = require('./KnxIp'),
     Message  = require('../Message'),
     Log      = require('../Log'),
@@ -27,15 +27,12 @@ function KnxIpDriver(options) {
      * @property {Object} _options
      * @private
      */
-    this._options = defaults(options || {}, {
+    this._options = _.defaults(options || {}, {
         remotePort: 3671,
         maxRepeats: 6,
-        logger: undefined
+        logger: undefined,
+        localAddress: null
     });
-
-    if (!this._options.localAddress) {
-        throw Error('Missing option "localAddress" to create KnxIpDriver');
-    }
 
     if (!this._options.remoteAddress) {
         throw Error('Missing option "remoteAddress" to create KnxIpDriver');
@@ -159,12 +156,52 @@ KnxIpDriver.prototype.getOptions = function() {
  * @return {dgram.Socket}
  */
 KnxIpDriver.prototype._createAndBindSocket = function(callback) {
-    var socket = dgram.createSocket('udp4');
+    var socket = dgram.createSocket('udp4'),
+        localAddress = this._options.localAddress || this._determineLocalAddress();
+
     socket.on('message', this._onSocketMessage.bind(this));
-    socket.bind(null, function() {
+
+    socket.bind(null, localAddress, function() {
         callback(null, socket);
     });
+
     return socket;
+};
+
+/**
+ * Checks local devices to match the set up remote address. The
+ * first matching ip address will be returned. This method uses the
+ * `os` module to access the network interfaces. Subnet masks are
+ * supported since `node v0.11.2`, for older node versions always
+ * class c mask `255.255.255.0` is used.
+ *
+ * @returns {String} ip address
+ * @private
+ */
+KnxIpDriver.prototype._determineLocalAddress = function() {
+    var interfaces = require('os').networkInterfaces(),
+        addresses = _.flatten(_.values(interfaces)),
+        remote = this._options.remoteAddress.split("."),
+        match;
+
+    match = _.find(addresses, function(address) {
+        var mask = (address.mask || "255.255.255.0").split("."),
+            addr = address.address.split(".");
+
+        if (address.family !== 'IPv4' || address.internal) {
+            return false;
+        }
+
+        return _.every(addr, function(element, index, list) {
+            return (addr[index] & mask[index]) === (remote[index] & mask[index]);
+        });
+    });
+
+    if(!match || !match.address) {
+        throw new Error('Can not determine local address');
+    }
+
+    return match.address;
 };
 
 /**
@@ -241,13 +278,12 @@ KnxIpDriver.prototype._confirmMessage = function(original, sequence, callback) {
  * @private
  */
 KnxIpDriver.prototype._createConnectionRequest = function() {
-    var options = this._options,
-        connectionPort = this._connectionSocket.address().port,
-        dataPort = this._dataSocket.address().port;
+    var connectionAddress = this._connectionSocket.address(),
+        dataAddress = this._dataSocket.address();
 
     return new KnxIp.ConnectionRequest(
-        new KnxIp.Hpai(options.localAddress, connectionPort),
-        new KnxIp.Hpai(options.localAddress, dataPort)
+        new KnxIp.Hpai(connectionAddress.address, connectionAddress.port),
+        new KnxIp.Hpai(dataAddress.address, dataAddress.port)
     );
 };
 
