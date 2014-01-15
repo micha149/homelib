@@ -1,5 +1,6 @@
 var UnexpectedValueError = require('../../Error/UnexpectedValueError'),
-    Buffer = require('buffer').Buffer;
+    Buffer = require('buffer').Buffer,
+    _ = require('underscore');
 
 IPADDR = /^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/;
 
@@ -58,6 +59,15 @@ Hpai.prototype.toArray = function() {
         (this.port & 0xff00) >> 8,
         (this.port & 0xff)
     ];
+};
+
+Hpai.parse = function(buf) {
+    var address, port;
+
+    port = (buf[6] << 8) | buf[7];
+    address = _.invoke(buf.slice(2, 6), 'toString', 10).join('.');
+
+    return new Hpai(address, port);
 };
 
 module.exports = Hpai;

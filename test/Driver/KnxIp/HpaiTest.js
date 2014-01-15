@@ -1,4 +1,5 @@
 var assert = require('assert'),
+    expect = require('chai').expect,
     sinon = require('sinon'),
     KnxIp = require('../../../homelib').Driver.KnxIp,
     Buffer = require('buffer').Buffer;
@@ -96,5 +97,22 @@ describe('Hpai', function() {
 
         });
 
+    });
+
+    describe('parsing buffer', function() {
+
+        it('retruns Hpai with correct address', function() {
+            var buf = new Buffer([0x08, 0x01, 192, 168, 23, 45, 0x04, 0xd2]),
+                hpai = KnxIp.Hpai.parse(buf);
+
+            expect(hpai.getAddress()).to.be.equal('192.168.23.45');
+        });
+
+        it('retruns Hpai with correct port', function() {
+            var buf = new Buffer([0x08, 0x01, 192, 168, 23, 45, 0x04, 0xd2]),
+                hpai = KnxIp.Hpai.parse(buf);
+
+            expect(hpai.getPort()).to.be.equal(1234);
+        });
     });
 });
