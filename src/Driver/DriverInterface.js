@@ -32,6 +32,11 @@ util.inherits(DriverInterface, events.EventEmitter);
 DriverInterface.prototype.connect = function() {};
 
 /**
+ * Closes the connection to the remote interface
+ */
+DriverInterface.prototype.disconnect = function() {};
+
+/**
  * Returns true if the driver is connected to the remote
  * @returns {Boolean}
  */

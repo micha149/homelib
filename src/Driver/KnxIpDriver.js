@@ -122,6 +122,18 @@ KnxIpDriver.prototype.connect = function() {
 /**
  * @inheritDoc Driver.DriverInterface
  */
+KnxIpDriver.prototype.disconnect = function() {
+    var address = this._connectionSocket.address(),
+        endpoint = new KnxIp.Hpai(address.address, address.port),
+        request = new KnxIp.DisconnectRequest(endpoint, this._channelId);
+
+    this._socketSend(request);
+    this._isConnected = false;
+};
+
+/**
+ * @inheritDoc Driver.DriverInterface
+ */
 KnxIpDriver.prototype.isConnected = function() {
     return this._isConnected;
 };
@@ -252,6 +264,15 @@ KnxIpDriver.prototype._onPacket = function(packet) {
                 self.emit('message', cemi.getMessage());
             });
         }
+    } else if (packet instanceof KnxIp.DisconnectRequest) {
+
+        this._socketSend(new KnxIp.DisconnectResponse(
+            packet.getChannelId(),
+            0
+        ));
+
+        this._isConnected = false;
+        this.emit('disconnect', packet);
     }
 };
 

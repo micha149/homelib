@@ -427,4 +427,80 @@ describe('KnxIpDriver', function() {
         });
     });
 
+    describe('receiving disconnect from remote', function() {
+
+        beforeEach(function() {
+
+            this.disconnectRequest = sinon.createStubInstance(KnxIp.DisconnectRequest);
+            this.disconnectRequest.getChannelId.returns(79);
+
+            var response  = sinon.createStubInstance(KnxIp.ConnectionResponse);
+            response.getChannelId.returns(79);
+            response.getServiceName.returns('connection.response');
+
+            this.driver.connect();
+            this.driver.emit('packet', response);
+            this.driver._connectionSocket.send.reset();
+        });
+
+        it('sends disconnect response', function() {
+
+            var expected = new KnxIp.DisconnectResponse(
+                this.tunnelingRequest.getChannelId(),
+                0 // status
+            );
+
+            this.driver.emit('packet', this.disconnectRequest);
+            expect(this.driver._connectionSocket).to.have.sent(expected.toBuffer());
+        });
+
+        it('triggers diconnect event on driver', function() {
+            var spy = sinon.spy();
+            this.driver.on('disconnect', spy);
+
+            this.driver.emit('packet', this.disconnectRequest);
+
+            expect(spy).to.be.calledOnce.and.calledWith(this.disconnectRequest);
+        });
+
+        it('sets driver status to not connected', function() {
+            expect(this.driver.isConnected()).to.be.equal(true);
+            this.driver.emit('packet', this.disconnectRequest);
+            expect(this.driver.isConnected()).not.to.be.equal(true);
+        });
+    });
+
+    describe('initiating a disconnect', function() {
+
+        beforeEach(function() {
+            this.channelId = 79;
+            var response  = sinon.createStubInstance(KnxIp.ConnectionResponse);
+            response.getChannelId.returns(this.channelId);
+            response.getServiceName.returns('connection.response');
+
+            this.driver.connect();
+            this.driver.emit('packet', response);
+            this.driver._connectionSocket.send.reset();
+        });
+
+        it('sends disconnect request', function() {
+            var socket = this.driver._connectionSocket,
+                expected = new KnxIp.DisconnectRequest(
+                    new KnxIp.Hpai(socket.address().address, socket.address().port),
+                    this.channelId
+                );
+
+            this.driver.disconnect();
+
+            expect(this.driver._connectionSocket).to.have.sent(expected.toBuffer());
+        });
+
+        it('sets driver status to not connected', function() {
+            expect(this.driver.isConnected()).to.be.equal(true);
+            this.driver.disconnect();
+            expect(this.driver.isConnected()).not.to.be.equal(true);
+        });
+
+    });
+
 });
