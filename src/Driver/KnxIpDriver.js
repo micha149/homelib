@@ -123,12 +123,14 @@ KnxIpDriver.prototype.connect = function() {
  * @inheritDoc Driver.DriverInterface
  */
 KnxIpDriver.prototype.disconnect = function() {
-    var address = this._connectionSocket.address(),
+    var self = this,
+        address = this._connectionSocket.address(),
         endpoint = new KnxIp.Hpai(address.address, address.port),
         request = new KnxIp.DisconnectRequest(endpoint, this._channelId);
 
-    this._socketSend(request);
-    this._isConnected = false;
+    this._sendAndExpect(request,  'disconnect.response', function() {
+        self._isConnected = false;
+    });
 };
 
 /**

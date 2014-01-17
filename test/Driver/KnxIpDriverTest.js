@@ -495,9 +495,48 @@ describe('KnxIpDriver', function() {
             expect(this.driver._connectionSocket).to.have.sent(expected.toBuffer());
         });
 
+        it('repeats disconnect request until response was received', function() {
+            var driver = this.driver,
+                clock = sinon.useFakeTimers(),
+                response = sinon.createStubInstance(KnxIp.DisconnectResponse);
+
+            response.getServiceName.returns('disconnect.response');
+
+            driver.disconnect();
+
+            expect(driver._dataSocket.send).never;
+            expect(driver._connectionSocket.send).calledOnce;
+
+            clock.tick(999);
+            expect(driver._connectionSocket.send).calledOnce;
+
+            clock.tick(1);
+            expect(driver._dataSocket.send).never;
+            expect(driver._connectionSocket.send).calledTwice;
+
+            clock.tick(1000);
+            expect(driver._dataSocket.send).never;
+            expect(driver._connectionSocket.send).to.be.calledThrice;
+
+            driver.emit('packet', response);
+
+            clock.tick(1000);
+            expect(driver._dataSocket.send).never;
+            expect(driver._connectionSocket.send).to.be.calledThrice;
+
+            clock.restore();
+        });
+
         it('sets driver status to not connected', function() {
+            var response = sinon.createStubInstance(KnxIp.DisconnectResponse);
+
+            response.getServiceName.returns('disconnect.response');
+
             expect(this.driver.isConnected()).to.be.equal(true);
+
             this.driver.disconnect();
+            this.driver.emit('packet', response);
+
             expect(this.driver.isConnected()).not.to.be.equal(true);
         });
 
