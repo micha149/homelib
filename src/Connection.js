@@ -15,19 +15,26 @@ function Connection(driver) {
 
     assert.implements(driver, Driver);
 
-    driver.on('message', this._onDriverMessage.bind(this));
-
     this._driver = driver;
     this._listeners = {};
+
+    driver.on('message', this._onDriverMessage.bind(this));
+    process.on('exit', this._onProcessExit.bind(this));
 }
 
-Connection.prototype._onDriverMessage = function (message) {
+Connection.prototype._onDriverMessage = function(message) {
 
     var rawAddress = message.getDestination().getRaw(),
         callbacks  = this._listeners[rawAddress];
 
     if (callbacks) {
         invoke(callbacks, "call", this, message);
+    }
+};
+
+Connection.prototype._onProcessExit = function() {
+    if(this._driver.isConnected()) {
+        this._driver.disconnect();
     }
 };
 

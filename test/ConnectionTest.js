@@ -44,6 +44,31 @@ describe('Connection', function() {
             expect(connection._onDriverMessage).to.be.calledOnce;
         });
 
+        it('triggers driver.disconnect() on process exit when driver is connected', function() {
+
+            var driver = sinon.createStubInstance(Driver),
+                connection;
+
+            driver.isConnected.returns(true);
+            sandbox.stub(process, 'on').withArgs('exit').yields();
+
+            connection = new Connection(driver);
+
+            expect(driver.disconnect).to.be.calledOnce;
+        });
+
+        it('does not trigger driver.disconnect() if driver is disconnected', function() {
+
+            var driver = sinon.createStubInstance(Driver),
+                connection;
+
+            driver.isConnected.returns(false);
+            sandbox.stub(process, 'on').withArgs('exit').yields();
+
+            connection = new Connection(driver);
+
+            expect(driver.disconnect).not.to.be.called;
+        });
     });
     
     describe('sending messages', function() {
