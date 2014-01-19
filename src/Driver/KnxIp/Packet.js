@@ -195,6 +195,10 @@ Packet.factory = function(buffer) {
             return require('./ConnectionStateRequest.js').parse(buffer);
         case 0x0421:
             return require('./TunnelingAck.js').parse(buffer);
+        case 0x0209:
+            return require('./DisconnectRequest.js').parse(buffer);
+        case 0x020a:
+            return require('./DisconnectResponse.js').parse(buffer);
         default:
             return Packet.parse(buffer);
     }
