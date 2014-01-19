@@ -16,7 +16,7 @@ var _ = require('underscore'),
  *             +--+-----------+--------+-----------------------+
  *
  * @constructor
- * @param {String|Number|Number[]}
+ * @param {String|Number|Number[]} address
  */
 var GroupAddress = function(address) {
     if (!address) {

@@ -7,7 +7,7 @@ var util = require('util'),
  * @extend Driver.KnxIp.Packet
  * @constructor
  * @param {Driver.KnxIp.Hpai} endpoint Connection endpoint
- * @parma {Number} channelId
+ * @param {Number} channelId
  */
 function DisconnectRequest(endpoint, chanelId) {
     this._endpoint = endpoint;
