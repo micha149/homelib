@@ -7,6 +7,7 @@ var util = require('util'),
  * @extend Driver.KnxIp.Packet
  * @constructor
  * @param {Driver.KnxIp.Hpai} endpoint Connection endpoint
+ * @parma {Number} channelId
  */
 function DisconnectRequest(endpoint, chanelId) {
     this._endpoint = endpoint;
@@ -28,14 +29,31 @@ DisconnectRequest.prototype.getData = function() {
     return [chanelId, 0].concat(endpoint);
 };
 
+/**
+ * Return the current chanel ID
+ *
+ * @returns {Number}
+ */
 DisconnectRequest.prototype.getChannelId = function() {
     return this._chanelId;
 };
 
+/**
+ * Returns the current Endpoint
+ *
+ * @returns {Driver.KnxIp.Hpai}
+ */
 DisconnectRequest.prototype.getEndpoint = function() {
     return this._endpoint;
 };
 
+/**
+ * Reads the given buffer and creates a new DisconnectRequest
+ * instance based on the infromations from the buffer.
+ *
+ * @param {buffer.Buffer} buf
+ * @returns {Driver.KnxIp.DisconnectRequest}
+ */
 DisconnectRequest.parse = function(buf) {
     var channelId = buf[6],
         endpoint = Hpai.parse(buf.slice(8, 16));

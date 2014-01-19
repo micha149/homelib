@@ -4,14 +4,12 @@ var util = require('util'),
     Buffer = require('buffer').Buffer;
 
 /**
- *
  * @class Driver.KnxIp.DisconnectResponse
  * @extend Driver.KnxIp.Packet
  *
  * @constructor
  * @param {Number} channelId
  * @param {Number} status
- * @param {Driver.KnxIp.Hpai} endpoint
  */
 function DisconnectResponse(channelId, status) {
 
