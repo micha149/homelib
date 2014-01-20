@@ -56,7 +56,7 @@ module.exports = function(grunt) {
             }
         },
 
-        clean: ['docs/output']
+        clean: ['docs/output', 'coverage.html']
     });
 
     grunt.loadNpmTasks('grunt-contrib-watch');
