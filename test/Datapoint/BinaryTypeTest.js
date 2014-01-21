@@ -1,5 +1,5 @@
 var homelib = require('../../homelib.js'),
-    BinaryDatapoint = homelib.Datapoint.BinaryDatapoint,
+    BinaryType = homelib.Datapoint.BinaryType,
     sinon = require('sinon'),
     chai    = require('chai'),
     expect  = chai.expect;
@@ -7,7 +7,7 @@ var homelib = require('../../homelib.js'),
 describe('Datapoint', function() {
 
     beforeEach(function() {
-        this.switch = new BinaryDatapoint({
+        this.switch = new BinaryType({
             "id": '1.001',
             "name": 'DPT_Switch',
             "valueMap": {
@@ -17,7 +17,7 @@ describe('Datapoint', function() {
         });
     });
 
-    describe('BinaryDatapoint', function() {
+    describe('BinaryType', function() {
 
         it('returns correct ID', function() {
             expect(this.switch.getId()).to.be.equal('1.001');

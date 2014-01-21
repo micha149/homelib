@@ -1,5 +1,5 @@
 module.exports = {
-    AbstractDatapoint: require('./AbstractDatapoint'),
-    BinaryDatapoint: require('./BinaryDatapoint'),
-    DatapointFactory: require('./DatapointFactory')
+    AbstractType: require('./AbstractType'),
+    BinaryType: require('./BinaryType'),
+    TypeFactory: require('./TypeFactory')
 };

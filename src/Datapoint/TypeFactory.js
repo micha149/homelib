@@ -8,13 +8,11 @@ _.map(require('./_definitions.json'), function(definition) {
     definitionsById[definition.id] = definition;
 });
 
-module.exports = function DatapointFactory() {
+function TypeFactory() {
     this._instances = {};
-};
+}
 
-var DatapointFactory = module.exports;
-
-DatapointFactory.prototype.get = function(id) {
+TypeFactory.prototype.get = function(id) {
     var def = definitionsById[id] || definitionsByName[id],
         constructor;
 
@@ -30,9 +28,11 @@ DatapointFactory.prototype.get = function(id) {
     return this._instances[def.id];
 };
 
-DatapointFactory.prototype._getConstructor = function(type) {
+TypeFactory.prototype._getConstructor = function(type) {
     switch(type) {
         case "PDT_BINARY_INFORMATION":
-            return require('./BinaryDatapoint');
+            return require('./BinaryType');
     }
 };
+
+module.exports = TypeFactory;

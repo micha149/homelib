@@ -1,7 +1,7 @@
 var expect = require('chai').expect,
     util = require('util'),
     homelib = require('../../homelib'),
-    AbstractType = homelib.Datapoint.AbstractDatapoint;
+    AbstractType = homelib.Datapoint.AbstractType;
 
 describe('Datapoint.AbstractType', function() {
 
