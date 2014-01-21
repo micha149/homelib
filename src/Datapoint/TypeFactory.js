@@ -32,6 +32,8 @@ TypeFactory.prototype._getConstructor = function(type) {
     switch(type) {
         case "PDT_BINARY_INFORMATION":
             return require('./BinaryType');
+        case "PDT_TIME":
+            return require('./TimeType');
     }
 };
 

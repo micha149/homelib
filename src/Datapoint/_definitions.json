@@ -142,4 +142,8 @@
         "0": "not occupied",
         "1": "occupied"
     }
+}, {
+    "id": "10.001",
+    "name": "DPT_TimeOfDay",
+    "type": "PDT_TIME"
 }]
