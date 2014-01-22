@@ -8,6 +8,10 @@ var util     = require('util'),
     async    = require('async'),
     ConnectionRequest = KnxIp.ConnectionRequest;
 
+var STATUS_CLOSED     = 'closed',
+    STATUS_CONNECTING = 'connecting',
+    STATUS_OPEN_IDLE  = 'open_idle';
+
 /**
  * Driver to connect an knx ip interface.
  *
@@ -39,11 +43,11 @@ function KnxIpDriver(options) {
     }
 
     /**
-     * If the driver is currently connected to remote
-     * @type {boolean} _isConnected
+     * The current driver status.
+     * @type {"closed"|"connecting"|"open_idle"} _status
      * @private
      */
-    this._isConnected = false;
+    this._status = STATUS_CLOSED;
 
     /**
      * Current Channel ID
@@ -94,9 +98,23 @@ util.inherits(KnxIpDriver, events.EventEmitter);
 /**
  * @inheritDoc Driver.DriverInterface
  */
-KnxIpDriver.prototype.connect = function() {
+KnxIpDriver.prototype.connect = function(callback) {
     var self = this,
         options = self._options;
+
+    if (this._status === STATUS_OPEN_IDLE) {
+        throw new Error('Driver is already connected');
+    }
+
+    if (callback) {
+        this.once('connected', callback.bind(this));
+    }
+
+    if(this._status !== STATUS_CLOSED) {
+        return;
+    }
+
+    this._status = STATUS_CONNECTING;
 
     async.parallel([
         self._createAndBindSocket.bind(self),
@@ -113,7 +131,7 @@ KnxIpDriver.prototype.connect = function() {
         self._sendAndExpect(connectionRequest, 'connection.response', function(response) {
             self._channelId = response.getChannelId();
             self._sequence = 0;
-            self._isConnected = true;
+            self._status = STATUS_OPEN_IDLE;
             self.emit('connected', response);
         });
     });
@@ -129,7 +147,7 @@ KnxIpDriver.prototype.disconnect = function() {
         request = new KnxIp.DisconnectRequest(endpoint, this._channelId);
 
     this._sendAndExpect(request,  'disconnect.response', function() {
-        self._isConnected = false;
+        self._status = STATUS_CLOSED;
     });
 };
 
@@ -137,14 +155,14 @@ KnxIpDriver.prototype.disconnect = function() {
  * @inheritDoc Driver.DriverInterface
  */
 KnxIpDriver.prototype.isConnected = function() {
-    return this._isConnected;
+    return this._status === STATUS_OPEN_IDLE;
 };
 
 /**
  * @inheritDoc Driver.DriverInterface
  */
 KnxIpDriver.prototype.send = function(message) {
-    if (!this.isConnected()) {
+    if (this._status !== STATUS_OPEN_IDLE) {
         throw new Error('Can not send messages while driver is not connected');
     }
 
@@ -273,7 +291,7 @@ KnxIpDriver.prototype._onPacket = function(packet) {
             0
         ));
 
-        this._isConnected = false;
+        this._status = STATUS_CLOSED;
         this.emit('disconnect', packet);
     }
 };

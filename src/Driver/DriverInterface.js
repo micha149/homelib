@@ -27,7 +27,11 @@ util.inherits(DriverInterface, events.EventEmitter);
  */
 
 /**
- * Opens a connection to the remote interface
+ * Opens a connection to the remote interface. The given callback will
+ * be executed after a connection has been established.
+ *
+ * @param {Function} callback
+ * @fires connected
  */
 DriverInterface.prototype.connect = function() {};
 

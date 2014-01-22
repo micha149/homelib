@@ -260,6 +260,55 @@ describe('KnxIpDriver', function() {
             expect(connectedSpy).to.be.calledOnce;
         });
 
+        it('does not make simultaneous connect requests', function() {
+            var driver = this.driver;
+
+            driver.connect();
+            driver.connect();
+
+            expect(dgram.createSocket).to.be.calledTwice;
+            expect(driver._connectionSocket.send).to.be.calledOnce;
+            expect(driver._dataSocket.send).not.to.be.called;
+        });
+
+        it('triggers callback after connection was established', function() {
+            var driver   = this.driver,
+                response = sinon.createStubInstance(KnxIp.ConnectionResponse),
+                callback = sandbox.spy();
+
+            response.getServiceName.returns('connection.response');
+            response.getChannelId.returns(33);
+
+            driver.connect(callback);
+
+            expect(callback).not.to.be.called;
+
+            driver.emit('packet', response);
+
+            expect(callback).to.be.calledOnce;
+        });
+
+        it('triggers callbacks of multiple connect() calls', function() {
+            var driver   = this.driver,
+                response = sinon.createStubInstance(KnxIp.ConnectionResponse),
+                callbackA = sandbox.spy(),
+                callbackB = sandbox.spy();
+
+            response.getServiceName.returns('connection.response');
+            response.getChannelId.returns(33);
+
+            driver.connect(callbackA);
+            driver.connect(callbackB);
+
+            expect(callbackA).not.to.be.called;
+            expect(callbackB).not.to.be.called;
+
+            driver.emit('packet', response);
+
+            expect(callbackA).to.be.calledOnce;
+            expect(callbackB).to.be.calledOnce;
+        });
+
     });
 
     describe('heartbeat', function() {
