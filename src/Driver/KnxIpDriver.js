@@ -161,7 +161,9 @@ KnxIpDriver.prototype.isConnected = function() {
 /**
  * @inheritDoc Driver.DriverInterface
  */
-KnxIpDriver.prototype.send = function(message) {
+KnxIpDriver.prototype.send = function(message, callback) {
+    var self = this;
+
     if (this._status !== STATUS_OPEN_IDLE) {
         throw new Error('Can not send messages while driver is not connected');
     }
@@ -169,7 +171,11 @@ KnxIpDriver.prototype.send = function(message) {
     var cemi = new KnxIp.Cemi('L_Data.req', message),
         request = new KnxIp.TunnelingRequest(this._channelId, this._sequence++, cemi);
 
-    this._socketSend(request);
+    this._sendAndExpect(request, 'tunneling.ack', function() {
+        if (callback) {
+            callback.call(self);
+        }
+    });
 };
 
 /**

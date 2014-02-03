@@ -387,6 +387,22 @@ describe('KnxIpDriver', function() {
 
         it('repeats tunneling request until tunneling response was received');
 
+        it('calls callback if message was transmitted successfully', function() {
+            var driver = this.driver,
+                ack = sinon.createStubInstance(KnxIp.TunnelingAck),
+                spy = sinon.spy();
+
+            ack.getServiceName.returns('tunneling.ack');
+
+            driver.send(this.message, spy);
+
+            expect(spy).not.to.be.called;
+            
+            driver.emit('packet', ack);
+
+            expect(spy).to.be.calledOnce.and.calledOn(driver);
+        });
+
     });
 
     describe('receiving messages', function() {

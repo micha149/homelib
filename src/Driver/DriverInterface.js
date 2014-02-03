@@ -42,14 +42,17 @@ DriverInterface.prototype.disconnect = function() {};
 
 /**
  * Returns true if the driver is connected to the remote
+ *
  * @returns {Boolean}
  */
 DriverInterface.prototype.isConnected = function() {};
 
 /**
  * Sends a message to the bus
+ *
  * @param {Message} msg
+ * @param {Function} callback
  */
-DriverInterface.prototype.send = function(msg) {};
+DriverInterface.prototype.send = function(msg, callback) {};
 
 module.exports = DriverInterface;
