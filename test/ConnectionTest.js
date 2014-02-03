@@ -213,4 +213,21 @@ describe('Connection', function() {
             expect(callbackB).to.be.calledOnce.and.calledWith(msg);
         });
     });
+
+    describe("Terminating a connection", function() {
+
+        it('calls disconect() on driver', function() {
+            var driver = sinon.createStubInstance(Driver),
+                connection;
+
+            driver.isConnected.returns(true);
+            
+            connection = new Connection(driver);
+
+            connection.disconnect();
+
+            expect(driver.disconnect).to.be.calledOnce;
+        });
+    });
+
 });

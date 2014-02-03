@@ -93,4 +93,11 @@ Connection.prototype.on = function (address, callback) {
     listeners[rawAddress].push(callback);
 };
 
+Connection.prototype.disconnect = function() {
+    var driver = this._driver;
+    if (driver.isConnected()) {
+        driver.disconnect();
+    }
+};
+
 module.exports = Connection;
