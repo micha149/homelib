@@ -19,7 +19,6 @@ function Connection(driver) {
     this._listeners = {};
 
     driver.on('message', this._onDriverMessage.bind(this));
-    process.on('exit', this._onProcessExit.bind(this));
 }
 
 /**
@@ -36,19 +35,6 @@ Connection.prototype._onDriverMessage = function(message) {
 
     if (callbacks) {
         invoke(callbacks, "call", this, message);
-    }
-};
-
-/**
- * This callback is triggered when the node process gets terminated.
- * It calls disconnect() on driver if driver is currently connected to
- * avoid dead connection on connected remotes
- *
- * @private
- */
-Connection.prototype._onProcessExit = function() {
-    if(this._driver.isConnected()) {
-        this._driver.disconnect();
     }
 };
 
