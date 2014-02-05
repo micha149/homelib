@@ -143,6 +143,34 @@
         "1": "occupied"
     }
 }, {
+    "id": "5.001",
+    "name": "DPT_Scaling",
+    "type": "1ByteRangeType",
+    "min": 0,
+    "max": 100,
+    "unit": "%"
+}, {
+    "id": "5.003",
+    "name": "DPT_Angle",
+    "type": "1ByteRangeType",
+    "min": 0,
+    "max": 360,
+    "unit": "°"
+}, {
+    "id": "5.004",
+    "name": "DPT_Percent_U8",
+    "type": "1ByteRangeType",
+    "min": 0,
+    "max": 255,
+    "unit": "%"
+}, {
+    "id": "6.001",
+    "name": "DPT_Percent_V8",
+    "type": "1ByteRangeType",
+    "min": -128,
+    "max": 127,
+    "unit": "%"
+}, {
     "id": "10.001",
     "name": "DPT_TimeOfDay",
     "type": "PDT_TIME"

@@ -34,6 +34,8 @@ TypeFactory.prototype._getConstructor = function(type) {
             return require('./BinaryType');
         case "PDT_TIME":
             return require('./TimeType');
+        case "1ByteRangeType":
+            return require('./RangeType');
     }
 };
 
