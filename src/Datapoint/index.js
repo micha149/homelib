@@ -3,5 +3,6 @@ module.exports = {
     BinaryType: require('./BinaryType'),
     RangeType: require('./RangeType'),
     TimeType: require('./TimeType'),
-    TypeFactory: require('./TypeFactory')
+    TypeFactory: require('./TypeFactory'),
+    Datapoint: require('./Datapoint')
 };
