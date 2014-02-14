@@ -119,4 +119,8 @@ Datapoint.prototype.publish = function(value) {
     });
 };
 
+Datapoint.create = function(type) {
+
+};
+
 module.exports = Datapoint;

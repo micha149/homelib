@@ -10,6 +10,7 @@ module.exports = {
     Error:  require(path + 'Error'),
     Log: require(path + 'Log'),
     Message: require(path + 'Message'),
+    Module: require(path + 'Module'),
     Connection: require(path + 'Connection'),
     Timer: require(path + 'Timer'),
     assert: require(path + "assert")
