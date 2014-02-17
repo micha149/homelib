@@ -30,6 +30,20 @@ describe('Datapoint', function() {
                 }).to.Throw(UnexpectedValueError);
             });
 
+            it('using factory', function() {
+                var typeId = '10.001',
+                    expectedType = sinon.createStubInstance(homelib.Datapoint.AbstractType),
+                    datapoint;
+
+                this.sandbox.stub(TypeFactory, "create");
+                TypeFactory.create.returns(expectedType);
+                datapoint = Datapoint.create(typeId)
+
+                expect(TypeFactory.create).to.be.calledOnce.and.calledWith(typeId);
+                expect(datapoint).to.be.instanceOf(Datapoint);
+                expect(datapoint.getType()).to.be.equal(expectedType);
+            });
+
         });
 
         describe('setting the value', function() {
@@ -99,27 +113,6 @@ describe('Datapoint', function() {
                 datapoint.publish("bar");
 
                 expect(spy).not.to.be.calledgi;
-            });
-
-        });
-
-        describe.only('using factory', function() {
-
-            beforeEach(function() {
-                this.sandbox.stub(TypeFactory, "create");
-            });
-
-            it('foo', function() {
-                var typeId = '10.001',
-                    expectedType = sinon.createStubInstance(homelib.Datapoint.AbstractType),
-                    datapoint;
-
-                TypeFactory.create.returns(expectedType);
-                datapoint = Datapoint.create(typeId)
-
-                expect(TypeFactory.create).to.be.calledOnce.and.calledWith(typeId);
-                expect(datapoint).to.be.instanceOf(Datapoint);
-                expect(datapoint.getType()).to.be.equal(expectedType);
             });
 
         });
