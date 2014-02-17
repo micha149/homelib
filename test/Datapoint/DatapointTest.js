@@ -2,16 +2,19 @@ var homelib = require('../../homelib.js'),
     TimeType = homelib.Datapoint.TimeType,
     Datapoint = homelib.Datapoint.Datapoint,
     UnexpectedValueError = homelib.Error.UnexpectedValueError,
+    TypeFactory = homelib.Datapoint.TypeFactory,
     sinon = require('sinon'),
     chai    = require('chai'),
     expect  = chai.expect;
+
+require('../sandbox');
 
 describe('Datapoint', function() {
 
     describe('Datapoint', function() {
 
         beforeEach(function() {
-            this.type = sinon.createStubInstance(homelib.Datapoint.TimeType)
+            this.type = sinon.createStubInstance(homelib.Datapoint.TimeType);
             this.datapoint = new Datapoint(this.type);
         });
 
@@ -23,7 +26,7 @@ describe('Datapoint', function() {
 
             it('throws error if no type is passed', function() {
                 expect(function() {
-                    new Datapoint();
+                    var datapoint = new Datapoint();
                 }).to.Throw(UnexpectedValueError);
             });
 
@@ -96,6 +99,27 @@ describe('Datapoint', function() {
                 datapoint.publish("bar");
 
                 expect(spy).not.to.be.calledgi;
+            });
+
+        });
+
+        describe.only('using factory', function() {
+
+            beforeEach(function() {
+                this.sandbox.stub(TypeFactory, "create");
+            });
+
+            it('foo', function() {
+                var typeId = '10.001',
+                    expectedType = sinon.createStubInstance(homelib.Datapoint.AbstractType),
+                    datapoint;
+
+                TypeFactory.create.returns(expectedType);
+                datapoint = Datapoint.create(typeId)
+
+                expect(TypeFactory.create).to.be.calledOnce.and.calledWith(typeId);
+                expect(datapoint).to.be.instanceOf(Datapoint);
+                expect(datapoint.getType()).to.be.equal(expectedType);
             });
 
         });

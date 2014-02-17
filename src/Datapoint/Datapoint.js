@@ -1,6 +1,7 @@
 var _ = require('underscore'),
     AbstractType = require('./AbstractType'),
-    UnexpectedValueError = require('../Error/UnexpectedValueError');
+    UnexpectedValueError = require('../Error/UnexpectedValueError'),
+    TypeFactory = require('./TypeFactory');
 
 /**
  * A Datapoint represents an data interface and can be used as input or output
@@ -119,8 +120,17 @@ Datapoint.prototype.publish = function(value) {
     });
 };
 
-Datapoint.create = function(type) {
+/**
+ * Creates a datapoint with the given type id
+ *
+ * @param {string} typeId
+ * @returns {Datapoint}
+ * @static
+ */
+Datapoint.create = function(typeId) {
+    var type = TypeFactory.create(typeId);
 
+    return new Datapoint(type);
 };
 
 module.exports = Datapoint;

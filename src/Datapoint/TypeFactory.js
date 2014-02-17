@@ -1,7 +1,8 @@
 var definitionsByName = {},
     definitionsById = {},
     UnexpectedValueError = require('../Error/UnexpectedValueError'),
-    _ = require('underscore');
+    _ = require('underscore'),
+    globalFactoryInstance;
 
 _.map(require('./_definitions.json'), function(definition) {
     definitionsByName[definition.name] = definition;
@@ -37,6 +38,13 @@ TypeFactory.prototype._getConstructor = function(type) {
         case "1ByteRangeType":
             return require('./RangeType');
     }
+};
+
+TypeFactory.create = function(id) {
+    if (!globalFactoryInstance) {
+        globalFactoryInstance = new TypeFactory();
+    }
+    return globalFactoryInstance.get(id);
 };
 
 module.exports = TypeFactory;
