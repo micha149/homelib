@@ -1,3 +1,4 @@
 module.exports = {
-    DaytimeModule: require('./DaytimeModule')
+    DaytimeModule: require('./DaytimeModule'),
+    BlendsTimerModule: require('./BlendsTimerModule')
 };
