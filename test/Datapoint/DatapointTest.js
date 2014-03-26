@@ -37,7 +37,7 @@ describe('Datapoint', function() {
 
                 this.sandbox.stub(TypeFactory, "create");
                 TypeFactory.create.returns(expectedType);
-                datapoint = Datapoint.create(typeId)
+                datapoint = Datapoint.create(typeId);
 
                 expect(TypeFactory.create).to.be.calledOnce.and.calledWith(typeId);
                 expect(datapoint).to.be.instanceOf(Datapoint);

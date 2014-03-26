@@ -23,7 +23,7 @@ var _ = require("underscore"),
 function GroupAddressModule(address, type, connection) {
 
     this._address = GroupAddress.create(address);
-    this._connection = connection
+    this._connection = connection;
 
     this._outputs = {
         'value': Datapoint.create(type)
