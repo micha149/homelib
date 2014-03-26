@@ -13,17 +13,17 @@
         "async": "~0.2.9"
     },
     "devDependencies": {
-        "sinon": ">=1.6.0",
-        "mocha": "*",
-        "chai": "*",
-        "sinon-chai": "*",
-        "grunt": "~0.4.1",
-        "grunt-contrib-jshint": "~0.6.4",
-        "grunt-mocha-test": "~0.6.3",
-        "grunt-jsduck": "~0.1.4",
+        "sinon": "~1.9.0",
+        "mocha": "~1.18.2",
+        "chai": "~1.9.1",
+        "sinon-chai": "~2.5.0",
+        "grunt": "~0.4.4",
+        "grunt-contrib-jshint": "~0.9.2",
+        "grunt-mocha-test": "~0.10.0",
+        "grunt-jsduck": "~1.0.1",
         "blanket": "~1.1.5",
         "grunt-contrib-clean": "~0.5.0",
-        "grunt-contrib-watch": "~0.5.3"
+        "grunt-contrib-watch": "~0.6.1"
     },
     "main": "./homelib.js",
     "scripts": {
