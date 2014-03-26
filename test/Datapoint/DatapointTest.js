@@ -59,8 +59,8 @@ describe('Datapoint', function() {
 
                 datapoint.publish(value);
 
-                expect(spyOne).to.be.calledWith(value).and.calledOn(datapoint);
-                expect(spyTwo).to.be.calledWith(value).and.calledOn(datapoint);
+                expect(spyOne).to.be.calledWith(value);
+                expect(spyTwo).to.be.calledWith(value);
             });
 
             it('triggers new subscriber immediately', function() {

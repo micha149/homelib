@@ -116,7 +116,7 @@ Datapoint.prototype.publish = function(value) {
     this._value = value;
 
     _.each(this._subscribers, function(subscriber) {
-        subscriber.call(self, value);
+        subscriber(value);
     });
 };
 
