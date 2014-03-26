@@ -98,4 +98,9 @@ GroupAddress.prototype.toString = function() {
     return [main, middle, sub].join('/');
 };
 
+
+GroupAddress.create = function(str) {
+    return new GroupAddress(str);
+};
+
 module.exports = GroupAddress;
