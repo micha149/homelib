@@ -7,7 +7,7 @@ var sinon = require('sinon'),
     Datapoint = homelib.Datapoint.Datapoint,
     UnexpectedValueError = homelib.Error.UnexpectedValueError;
 
-describe.only('Module.GroupAddressModule', function() {
+describe('Module.GroupAddressModule', function() {
 
     var sandbox;
 
