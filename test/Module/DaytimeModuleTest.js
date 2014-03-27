@@ -127,6 +127,18 @@ describe('Module.DaytimeModule', function() {
             expect(daytime.getOutput('date').publish).to.be.calledTwice;
             expect(daytime.getOutput('date').publish).to.be.calledWith(expectedDate);
         });
-    });
 
+        it('calculates correct time if hors are larger and seconds are smaller', function() {
+            var daytime = new DaytimeModule('21:50:00'),
+                expectedDate = new Date('2014-03-27 21:50:00');
+
+            var clock = this.setFakeTime("Wed March 26 2014 22:08:00 GMT+0100 (CET)");
+
+            daytime.start();
+            clock.tick(1);
+
+            expect(daytime.getOutput('date').publish).to.be.calledOnce;
+            expect(daytime.getOutput('date').publish).to.be.calledWith(expectedDate);
+        });
+    });
 });

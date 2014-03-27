@@ -23,9 +23,9 @@ function DaytimeModule(str) {
         throw new UnexpectedValueError('Unexpected time format. Expected something like "00:00:00"');
     }
 
-    this.hours   = matches[1];
-    this.minutes = matches[2];
-    this.seconds = matches[3];
+    this.hours   = Number(matches[1]);
+    this.minutes = Number(matches[2]);
+    this.seconds = Number(matches[3]);
 
     this._outputs = {
         'date': Datapoint.create("10.001")
@@ -45,9 +45,15 @@ DaytimeModule.prototype.start = function() {
 
 DaytimeModule.prototype._getNextDate = function() {
 
-    var now = new Date();
+    var now = new Date(),
+        currentSeconds = getSeconds(now.getHours(), now.getMinutes(), now.getSeconds()),
+        expectedSeconds = getSeconds(this.hours, this.minutes, this.seconds);
 
-    if (now.getHours() >= this.hours && now.getMinutes() >= this.minutes && now.getSeconds() >= this.seconds) {
+    function getSeconds(hours, minutes, seconds) {
+        return Number(hours) * 60 * 60 + Number(minutes) * 60 + Number(seconds);
+    }
+
+    if (currentSeconds >= expectedSeconds) {
         now.setTime(now.getTime() + 86400000);
     }
 
