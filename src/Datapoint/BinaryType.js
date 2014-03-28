@@ -4,10 +4,20 @@ var util = require('util'),
     _ = require('underscore');
 
 function BinaryType(options) {
+    var self = this;
+
     AbstractType.apply(this, arguments);
 
-    this._valueMap = options.valueMap;
-    this._valueMapInverted = _.invert(this._valueMap);
+    this._valueMap = {};
+    this._valueMapInverted = {};
+
+    _.each(options.valueMap, function(value, key) {
+        if (value.toLowerCase) {
+            value = value.toLowerCase();
+        }
+        self._valueMap[key] = value;
+        self._valueMapInverted[value] = key;
+    });
 }
 util.inherits(BinaryType, AbstractType);
 
@@ -18,6 +28,10 @@ BinaryType.prototype.validate = function(value) {
 };
 
 BinaryType.prototype.parse = function(value) {
+
+    if (value.toLowerCase) {
+        value = value.toLowerCase();
+    }
 
     if (!this._valueMapInverted[value]) {
         throw new UnexpectedValueError(value + ' could not be parsed to DPT_Switch value');
