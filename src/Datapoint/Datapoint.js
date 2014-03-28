@@ -63,7 +63,7 @@ Datapoint.prototype.getType = function() {
 Datapoint.prototype.subscribe = function(callback) {
     this._subscribers.push(callback);
     if (this._value) {
-        callback.call(this, this._value);
+        callback(this._value);
     }
 };
 
