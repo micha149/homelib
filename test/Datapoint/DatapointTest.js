@@ -71,7 +71,7 @@ describe('Datapoint', function() {
                 datapoint.publish(value);
                 datapoint.subscribe(spy);
 
-                expect(spy).to.be.calledWith(value).and.calledOn(datapoint);
+                expect(spy).to.be.calledWith(value);
             });
 
         });

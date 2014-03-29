@@ -51,8 +51,8 @@ describe('Datapoint', function() {
         });
 
         it('transforms array of bytes to readable string', function() {
-            expect(this.switch.transform([1])).to.be.equal('On');
-            expect(this.switch.transform([0])).to.be.equal('Off');
+            expect(this.switch.transform([1])).to.be.equal('on');
+            expect(this.switch.transform([0])).to.be.equal('off');
         });
 
         it('throws error if transform gets wrong data', function() {
