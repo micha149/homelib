@@ -46,6 +46,35 @@ describe('Datapoint', function() {
 
         });
 
+        describe('adding a subscriber', function() {
+
+            it('triggers new subscriber immediately if a value was published before', function() {
+                var datapoint = this.datapoint,
+                    value = 149,
+                    spy = sinon.spy();
+
+                datapoint.publish(value);
+                datapoint.subscribe(spy);
+
+                expect(spy).to.be.calledWith(value);
+            });
+
+            it("calls publish of given datapoitn with correct scope", function() {
+                var value = 149,
+                    datapoint = this.datapoint,
+                    anotherDatapoint = sinon.createStubInstance(Datapoint);
+
+                datapoint.publish(value);
+
+                datapoint.subscribe(anotherDatapoint);
+
+                expect(anotherDatapoint.publish).to.be.calledOnce;
+                expect(anotherDatapoint.publish).to.be.calledWith(149);
+                expect(anotherDatapoint.publish).to.be.calledOn(anotherDatapoint);
+            });
+
+        });
+
         describe('setting the value', function() {
 
             it('triggers subscriber', function() {
@@ -63,15 +92,18 @@ describe('Datapoint', function() {
                 expect(spyTwo).to.be.calledWith(value);
             });
 
-            it('triggers new subscriber immediately', function() {
-                var datapoint = this.datapoint,
-                    value = 149,
-                    spy = sinon.spy();
+            it('triggers publish of given datapoint with correct scope', function() {
+                var value = 149,
+                    datapoint = this.datapoint,
+                    anotherDatapoint = sinon.createStubInstance(Datapoint);
+
+                datapoint.subscribe(anotherDatapoint);
 
                 datapoint.publish(value);
-                datapoint.subscribe(spy);
 
-                expect(spy).to.be.calledWith(value);
+                expect(anotherDatapoint.publish).to.be.calledOnce;
+                expect(anotherDatapoint.publish).to.be.calledWith(149);
+                expect(anotherDatapoint.publish).to.be.calledOn(anotherDatapoint);
             });
 
         });

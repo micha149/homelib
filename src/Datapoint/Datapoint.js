@@ -23,7 +23,7 @@ var _ = require('underscore'),
  *         throw new Error('Output must consist of same type as input');
  *     }
  *
- *     output.subscribe(input.publish);
+ *     output.subscribe(input);
  *
  * @class Datapoint.Datapoint
  * @param type {Datapoint.AbstractType}
@@ -54,14 +54,25 @@ Datapoint.prototype.getType = function() {
  * time the value changes using #publish. If #publish was called before
  * {@link #subscribe}, the callback is triggered immediately.
  *
+ * If a #Datapoint.Datapoint is given as subscriber, it publish method is called each time
+ * a value gets published. This could be used for connections between Modules.
+ *
  *     datapoint.subscribe(function(value) {
  *         // executed each time a new value is published
  *     });
  *
- * @param {Function} callback
+ *     datapoint.subscribe(anotherDatapoint);
+ *
+ * @param {Function|Datapoint.Datapoint} callback Callback function or Datapoint
  */
 Datapoint.prototype.subscribe = function(callback) {
+
+    if (callback instanceof Datapoint) {
+        callback = callback.publish.bind(callback);
+    }
+
     this._subscribers.push(callback);
+
     if (this._value) {
         callback(this._value);
     }
@@ -75,17 +86,21 @@ Datapoint.prototype.subscribe = function(callback) {
  *         // executed once a new value is published
  *     });
  *
- * @param {Function} callback
+ * @param {Function|Datapoint.Datapoint} callback Callback function or Datapoint
  */
 Datapoint.prototype.subscribeOnce = function(callback) {
     var self = this,
         wrapper;
 
+    if (callback instanceof Datapoint) {
+        callback = callback.publish.bind(callback);
+    }
+
     if (this._value) {
-        callback.call(this, this._value);
+        callback(this._value);
     } else {
         wrapper = function() {
-            callback.call(self, self._value);
+            callback(self._value);
             self._subscribers = _.without(self._subscribers, wrapper);
         };
         wrapper.wrappedFunction = callback;
@@ -124,7 +139,7 @@ Datapoint.prototype.publish = function(value) {
  * Creates a datapoint with the given type id
  *
  * @param {string} typeId
- * @returns {Datapoint}
+ * @returns {Datapoint.Datapoint}
  * @static
  */
 Datapoint.create = function(typeId) {
