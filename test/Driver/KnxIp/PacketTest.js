@@ -97,7 +97,8 @@ describe('Packet.parse()', function() {
     it('returns packet instance by given array', function() {
         var expectedServiceType = 0x0421,
             expectedData = [0x6d, 0x69, 0x63, 0x68, 0x61, 0x31, 0x34, 0x39],
-            header = new Array(6);
+            header = new Array(6),
+            packet;
 
         header[0] = 0x06;
         header[1] = 0x10;
@@ -114,7 +115,8 @@ describe('Packet.parse()', function() {
     it('returns packet instance by given buffer', function() {
         var expectedServiceType = 0x0421,
             expectedData = [0x6d, 0x69, 0x63, 0x68, 0x61, 0x31, 0x34, 0x39],
-            buffer = new Buffer(14);
+            buffer = new Buffer(14),
+            packet;
 
         buffer[0] = 0x06;
         buffer[1] = 0x10;
