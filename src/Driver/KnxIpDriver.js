@@ -133,6 +133,7 @@ KnxIpDriver.prototype.connect = function(callback) {
             self._sequence = 0;
             self._status = STATUS_OPEN_IDLE;
             self.emit('connected', response);
+            self._startHeartbeat();
         });
     });
 };
@@ -377,14 +378,21 @@ KnxIpDriver.prototype._sendAndExpect = function(packet, expectedService, callbac
  * @private
  */
 KnxIpDriver.prototype._startHeartbeat = function() {
-//    var stateRequest = new KnxIp.ConnectionStateRequest(
-//        this._channelId,
-//        new KnxIp.Hpai(options.localAddress, this._connectionSocket.address().port)
-//    );
-//
-//    this._sendAndExpect(stateRequest, 'connectionstate.response', function(){
-//
-//    });
+
+    var self = this,
+        connectionAddress = this._connectionSocket.address(),
+        stateRequest = new KnxIp.ConnectionStateRequest(
+            this._channelId,
+            new KnxIp.Hpai(connectionAddress.address, connectionAddress.port)
+        );
+
+    clearTimeout(this._heartbeatTimeout);
+
+    this._sendAndExpect(stateRequest, 'connectionstate.response', function(){
+        self._heartbeatTimeout = setTimeout(function() {
+            self._startHeartbeat();
+        }, 60000);
+    });
 };
 
 /**

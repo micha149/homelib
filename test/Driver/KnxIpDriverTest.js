@@ -313,7 +313,15 @@ describe('KnxIpDriver', function() {
 
     describe('heartbeat', function() {
 
-        it.skip('sends first connection state request immediately after connect', function() {
+        beforeEach(function() {
+            this.clock = sinon.useFakeTimers();
+        });
+
+        afterEach(function() {
+            this.clock.restore();
+        });
+
+        it('sends first connection state request immediately after connect', function() {
             var driver = this.driver,
                 response  = sinon.createStubInstance(KnxIp.ConnectionResponse),
                 channelId = 123,
@@ -327,13 +335,56 @@ describe('KnxIpDriver', function() {
             driver._connectionSocket.send.reset();
             driver.emit('packet', response);
 
+            expect(driver._dataSocket.send).never;
             expect(driver._connectionSocket.send).calledOnce;
             expect(driver._connectionSocket).to.have.sent(expected);
         });
 
-        it('repeats every 60 seconds');
+        it('repeats every 60 seconds', function() {
+            var driver = this.driver,
+                connectionResponse  = sinon.createStubInstance(KnxIp.ConnectionResponse),
+                stateResponse = sinon.createStubInstance(KnxIp.ConnectionStateResponse),
+                channelId = 123,
+                expected;
 
-        it('throws error if no status is returned');
+            connectionResponse.getChannelId.returns(channelId);
+            connectionResponse.getServiceName.returns('connection.response');
+            stateResponse.getChannelId.returns(channelId);
+            stateResponse.getServiceName.returns('connectionstate.response');
+
+            expected = new KnxIp.ConnectionStateRequest(channelId, new KnxIp.Hpai("192.168.0.92", 5001));
+
+            driver.connect();
+            driver.emit('packet', connectionResponse);
+            driver.emit('packet', stateResponse);
+            driver._connectionSocket.send.reset();
+
+            this.clock.tick(59000); // 59 seconds
+            expect(driver._connectionSocket.send).not.to.be.called;
+
+            this.clock.tick(1000); // 60 seconds
+            expect(driver._connectionSocket.send).to.be.calledOnce;
+            expect(driver._connectionSocket).to.have.sent(expected);
+
+            expect(driver._dataSocket.send).never;
+        });
+
+        it.skip('throws error if no status is returned', function() {
+            var driver = this.driver,
+                response  = sinon.createStubInstance(KnxIp.ConnectionResponse),
+                channelId = 123,
+                expected;
+
+            response.getChannelId.returns(channelId);
+            response.getServiceName.returns('connection.response');
+
+            expect(function() {
+                driver.connect();
+                driver._connectionSocket.send.reset();
+                driver.emit('packet', response);
+            }).to.Throw(Error);
+
+        });
 
     });
 

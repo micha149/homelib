@@ -182,6 +182,26 @@ describe('Packet.factory', function() {
         assert.ok(stub.calledWith(buffer), "passed buffer to parse method");
     });
 
+    it('calls ConnectionStateRequest\'s parse method on buffer with 0x0207', function() {
+        var stub = sandbox.stub(KnxIp.ConnectionStateRequest, "parse"),
+            buffer = new Buffer([0x06, 0x10, 0x02, 0x07, 0x00, 0x10, 0x49, 0x00, 0x08, 0x01, 0xc0, 0xa8, 0x0a, 0xb3, 0xd9, 0x6d]);
+
+        KnxIp.Packet.factory(buffer);
+
+        assert.ok(stub.calledOnce, "parse on ConnectionRequests called");
+        assert.ok(stub.calledWith(buffer), "passed buffer to parse method");
+    });
+
+    it('calls ConnectionStateResponse\'s parse method on buffer with 0x0208', function() {
+        var stub = sandbox.stub(KnxIp.ConnectionStateResponse, "parse"),
+            buffer = new Buffer([0x06, 0x10, 0x02, 0x08, 0x00, 0x08, 0x49, 0x00]);
+
+        KnxIp.Packet.factory(buffer);
+
+        assert.ok(stub.calledOnce, "parse on ConnectionStateResponse called");
+        assert.ok(stub.calledWith(buffer), "passed buffer to parse method");
+    });
+
     it('calls Packet\'s parse method on unknown service types', function() {
         var stub = sandbox.stub(KnxIp.Packet, "parse"),
             buffer = new Buffer([0x06, 0x10, 0x47, 0x11, 0x01, 0x02, 0x03, 0x04]);
