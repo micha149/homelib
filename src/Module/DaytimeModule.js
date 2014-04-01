@@ -1,5 +1,7 @@
 var _ = require("underscore"),
+    util = require('util'),
     Datapoint = require("../Datapoint/Datapoint"),
+    AbstractModule = require('./AbstractModule'),
     UnexpectedValueError = require('../Error/UnexpectedValueError');
 
 /**
@@ -34,7 +36,10 @@ function DaytimeModule(str) {
     this._inputs = {
         'trigger': Datapoint.create("1.017")
     };
+
+    AbstractModule.apply(this, arguments);
 }
+util.inherits(DaytimeModule, AbstractModule);
 
 DaytimeModule.prototype.start = function() {
     var nextDate = this._getNextDate();
@@ -62,26 +67,6 @@ DaytimeModule.prototype._getNextDate = function() {
     now.setSeconds(this.seconds);
 
     return now;
-};
-
-/**
- * Returns outgoing {@link Datapoint.Datapoint Datapoint} for given name
- *
- * @param {String} name
- * @returns {Datapoint.Datapoint}
- */
-DaytimeModule.prototype.getOutput = function(name) {
-    return this._outputs[name];
-};
-
-/**
- * Returns ingoing {@link Datapoint.Datapoint Datapoint} for given name
- *
- * @param {String} name
- * @returns {Datapoint.Datapoint}
- */
-DaytimeModule.prototype.getInput = function(name) {
-    return this._inputs[name];
 };
 
 module.exports = DaytimeModule;

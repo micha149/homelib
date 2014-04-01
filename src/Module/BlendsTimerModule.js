@@ -1,5 +1,7 @@
 var _ = require("underscore"),
+    util = require('util'),
     Datapoint = require("../Datapoint/Datapoint"),
+    AbstractModule = require('./AbstractModule'),
     UnexpectedValueError = require('../Error/UnexpectedValueError');
 
 
@@ -23,7 +25,10 @@ function BlendsTimerModule(str) {
         up: null,
         down: null
     };
+
+    AbstractModule.apply(this, arguments);
 }
+util.inherits(BlendsTimerModule, AbstractModule);
 
 BlendsTimerModule.prototype.start = function() {
     var self = this,
@@ -67,26 +72,6 @@ BlendsTimerModule.prototype._startTimer = function(dir, time) {
 BlendsTimerModule.prototype._getSecondsUntil = function (date) {
     var diff = date.getTime() - Date.now();
     return diff;
-};
-
-/**
- * Returns outgoing {@link Datapoint.Datapoint Datapoint} for given name
- *
- * @param {String} name
- * @returns {Datapoint.Datapoint}
- */
-BlendsTimerModule.prototype.getOutput = function(name) {
-    return this._outputs[name];
-};
-
-/**
- * Returns ingoing {@link Datapoint.Datapoint Datapoint} for given name
- *
- * @param {String} name
- * @returns {Datapoint.Datapoint}
- */
-BlendsTimerModule.prototype.getInput = function(name) {
-    return this._inputs[name];
 };
 
 module.exports = BlendsTimerModule;

@@ -1,5 +1,7 @@
 var _ = require("underscore"),
+    util = require('util'),
     Datapoint = require("../Datapoint/Datapoint"),
+    AbstractModule = require('./AbstractModule'),
     UnexpectedValueError = require('../Error/UnexpectedValueError'),
     GroupAddress = require('../GroupAddress.js'),
     Message = require('../Message.js');
@@ -32,7 +34,10 @@ function GroupAddressModule(address, type, connection) {
     this._inputs = {
         'value': Datapoint.create(type)
     };
+
+    AbstractModule.apply(this, arguments);
 }
+util.inherits(GroupAddressModule, AbstractModule);
 
 GroupAddressModule.prototype.start = function() {
 
@@ -58,26 +63,6 @@ GroupAddressModule.prototype._onMessage = function(message) {
         type = output.getType();
 
     output.publish(type.transform(message.getData()));
-};
-
-/**
- * Returns outgoing {@link Datapoint.Datapoint Datapoint} for given name
- *
- * @param {String} name
- * @returns {Datapoint.Datapoint}
- */
-GroupAddressModule.prototype.getOutput = function(name) {
-    return this._outputs[name];
-};
-
-/**
- * Returns ingoing {@link Datapoint.Datapoint Datapoint} for given name
- *
- * @param {String} name
- * @returns {Datapoint.Datapoint}
- */
-GroupAddressModule.prototype.getInput = function(name) {
-    return this._inputs[name];
 };
 
 module.exports = GroupAddressModule;
