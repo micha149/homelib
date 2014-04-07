@@ -8,6 +8,10 @@ var _ = require('underscore'),
  * of any object which works with data types. It implements the
  * publisher/subscriber pattern.
  *
+ * If a type is given to the Datapoint it will be used to validate the opposite
+ * datapoint when subscribe is called. If both datapoints have types and they
+ * didn't match, an exception will be thrown.
+ *
  * For example:
  * We have a date module which provides the next upcoming sun rise and a blends
  * module which needs a date/time for opening the blends. So, we take the input
@@ -18,11 +22,6 @@ var _ = require('underscore'),
  *     var output = dateModule.getOutput("date"),
  *         input = blendsModule.getInput("uptime");
  *
- *     // Only needed for generic configuration interfaces
- *     if (output.getType() !== input.getType()) {
- *         throw new Error('Output must consist of same type as input');
- *     }
- *
  *     output.subscribe(input);
  *
  * @class Datapoint.Datapoint
@@ -30,11 +29,6 @@ var _ = require('underscore'),
  * @constructor
  */
 function Datapoint(type) {
-
-    if (!type || !(type instanceof AbstractType)) {
-        throw new UnexpectedValueError('Expected DatapointType as first argument of Datapoint');
-    }
-
     this._type = type;
     this._subscribers = [];
     this._value;
@@ -47,6 +41,51 @@ function Datapoint(type) {
  */
 Datapoint.prototype.getType = function() {
     return this._type;
+};
+
+/**
+ * Returns true if the Datapoint instance has a type
+ *
+ * @returns {boolean}
+ */
+Datapoint.prototype.hasType = function() {
+    return !!this._type;
+};
+
+/**
+ * Checkf if type of given datapoint matches to type tyupe of these instance.
+ * An #Error.UnexpectedValueError will be thrown if types didn't match.
+ *
+ * @param {Datapoint.Datapoint} datapoint
+ * @private
+ */
+Datapoint.prototype._assertDatapointType = function(datapoint) {
+    if (datapoint.hasType() && this.hasType() && datapoint.getType() !== this.getType()) {
+        throw new UnexpectedValueError('Type of given datapoint did not match');
+    }
+};
+
+/**
+ * If its necessary to wrap the the given callback with a bind, this
+ * mehtod will do this. The original callback is also stored in a
+ * property of the wrapperfunction for unsubcribing.
+ *
+ * @param {Function} callback
+ * @returns {Function}
+ * @private
+ */
+Datapoint.prototype._getCallbackforDatapoint = function (callback) {
+
+    if (!(callback instanceof Datapoint)) {
+        return callback;
+    }
+
+    var wrapper = callback.publish.bind(callback);
+
+    this._assertDatapointType(callback);
+    wrapper.wrappedFunction = callback;
+
+    return wrapper;
 };
 
 /**
@@ -67,9 +106,7 @@ Datapoint.prototype.getType = function() {
  */
 Datapoint.prototype.subscribe = function(callback) {
 
-    if (callback instanceof Datapoint) {
-        callback = callback.publish.bind(callback);
-    }
+    callback = this._getCallbackforDatapoint(callback);
 
     this._subscribers.push(callback);
 
@@ -92,9 +129,7 @@ Datapoint.prototype.subscribeOnce = function(callback) {
     var self = this,
         wrapper;
 
-    if (callback instanceof Datapoint) {
-        callback = callback.publish.bind(callback);
-    }
+    callback = this._getCallbackforDatapoint(callback);
 
     if (this._value) {
         callback(this._value);
@@ -143,8 +178,7 @@ Datapoint.prototype.publish = function(value) {
  * @static
  */
 Datapoint.create = function(typeId) {
-    var type = TypeFactory.create(typeId);
-
+    var type = typeId ? TypeFactory.create(typeId) : undefined;
     return new Datapoint(type);
 };
 
