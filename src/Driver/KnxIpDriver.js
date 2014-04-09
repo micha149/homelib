@@ -129,11 +129,21 @@ KnxIpDriver.prototype.connect = function(callback) {
         connectionRequest = self._createConnectionRequest();
 
         self._sendAndExpect(connectionRequest, 'connection.response', function(response) {
+
+            var endpoint = response.getEndpoint(),
+                logMsg = 'Connected to Knx/IP Interface';
+
+            if (endpoint) {
+                logMsg += " on " + endpoint.getAddress() + ":" + endpoint.getPort();
+            }
+
             self._channelId = response.getChannelId();
             self._sequence = 0;
             self._status = STATUS_OPEN_IDLE;
             self.emit('connected', response);
             self._startHeartbeat();
+
+            self._logger.info(logMsg);
         });
     });
 };
@@ -173,6 +183,7 @@ KnxIpDriver.prototype.send = function(message, callback) {
         request = new KnxIp.TunnelingRequest(this._channelId, this._sequence++, cemi);
 
     this._sendAndExpect(request, 'tunneling.ack', function() {
+        this._logger.verbose("Send Message to " + message.getDestination() + ": " + message.getData());
         if (callback) {
             callback.call(self);
         }
@@ -287,8 +298,10 @@ KnxIpDriver.prototype._onPacket = function(packet) {
 
         if(cemi && cemi.getMessageCode() !== "L_Data.con") {
             this._confirmMessage(cemi, packet.getSequence(), function() {
+                var message = cemi.getMessage();
                 self._sequence = packet.getSequence() + 1;
-                self.emit('message', cemi.getMessage());
+                self.emit('message', message);
+                self._logger.verbose("Received Message from " + message.getOrigin() + " to " + message.getDestination() + ": " + message.getData());
             });
         }
     } else if (packet instanceof KnxIp.DisconnectRequest) {

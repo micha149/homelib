@@ -1,7 +1,6 @@
 var Buffer = require('buffer').Buffer,
     homelib = require('../../homelib.js'),
     KnxIp = homelib.Driver.KnxIp,
-    Log = homelib.Log,
     KnxIpDriver = homelib.Driver.KnxIpDriver,
     Message = homelib.Message,
     dgram = require('dgram'),
@@ -34,9 +33,12 @@ describe('KnxIpDriver', function() {
             return socket;
         });
 
+        this.logger = sinon.createStubInstance(homelib.Log.LoggerInterface);
+
         this.driver = new KnxIpDriver({
             localAddress: "192.168.0.92",
-            remoteAddress: "192.168.0.10"
+            remoteAddress: "192.168.0.10",
+            logger: this.logger
         });
     });
 
@@ -64,6 +66,22 @@ describe('KnxIpDriver', function() {
         it('uses default remote port 3671', function() {
             var options = this.driver.getOptions();
             expect(options.remotePort).to.be.equal(3671);
+        });
+
+        it('creates instance of NullLogger if no logger was passed', function() {
+
+            var expectedLogger = sinon.createStubInstance(homelib.Log.NullLogger),
+                driver;
+
+            sandbox.stub(homelib.Log, "NullLogger").returns(expectedLogger);
+
+            driver = new KnxIpDriver({
+                localAddress: "192.168.0.92",
+                remoteAddress: "192.168.0.10"
+            });
+
+            expect(homelib.Log.NullLogger).to.be.calledOnce.and.calledWithNew;
+            expect(driver._logger).to.be.equal(expectedLogger);
         });
 
     });
@@ -309,6 +327,27 @@ describe('KnxIpDriver', function() {
             expect(callbackB).to.be.calledOnce;
         });
 
+        it('send to logger if connection was established', function() {
+            var driver   = this.driver,
+                response = sinon.createStubInstance(KnxIp.ConnectionResponse),
+                endpoint = sinon.createStubInstance(KnxIp.Hpai),
+                expectedMessage = "Connected to Knx/IP Interface on 192.168.0.10:3671";
+
+            endpoint.getAddress.returns('192.168.0.10');
+            endpoint.getPort.returns(3671);
+            response.getEndpoint.returns(endpoint);
+            response.getServiceName.returns('connection.response');
+            response.getChannelId.returns(33);
+
+            driver.connect();
+
+            expect(this.logger.info).not.to.be.called;
+
+            driver.emit('packet', response);
+
+            expect(this.logger.info).to.be.calledWith(expectedMessage);
+        });
+
     });
 
     describe('heartbeat', function() {
@@ -393,6 +432,7 @@ describe('KnxIpDriver', function() {
         beforeEach(function() {
             this.destination = sinon.createStubInstance(homelib.GroupAddress);
             this.destination.getRaw.returns([0x08, 0x02]);
+            this.destination.toString.returns("1/2/3");
 
             this.message = sinon.createStubInstance(Message);
             this.message.getPriority.returns("normal");
@@ -414,6 +454,7 @@ describe('KnxIpDriver', function() {
             this.driver.connect();
             this.driver.emit('packet', response);
             this.driver._connectionSocket.send.reset();
+
         });
 
         it('throws exception if connection is not open', function() {
@@ -454,12 +495,36 @@ describe('KnxIpDriver', function() {
             expect(spy).to.be.calledOnce.and.calledOn(driver);
         });
 
+        it('calls logger after message was transmitted', function() {
+            var driver = this.driver,
+                expectedLogMsg = "Send Message to 1/2/3: 1",
+                ack = sinon.createStubInstance(KnxIp.TunnelingAck);
+
+            ack.getServiceName.returns('tunneling.ack');
+
+            driver.send(this.message);
+
+            expect(this.logger.verbose).not.to.be.called;
+
+            driver.emit('packet', ack);
+
+            expect(this.logger.verbose).to.be.calledWith(expectedLogMsg);
+        });
+
     });
 
     describe('receiving messages', function() {
 
         beforeEach(function() {
+            this.origin = sinon.createStubInstance(homelib.PhysicalAddress);
+            this.origin.toString.returns('1.10.4');
+            this.destination = sinon.createStubInstance(homelib.GroupAddress);
+            this.destination.toString.returns("1/2/3");
+
             this.message = sinon.createStubInstance(Message);
+            this.message.getOrigin.returns(this.origin);
+            this.message.getDestination.returns(this.destination);
+            this.message.getData.returns([0]);
 
             this.cemi = sinon.createStubInstance(KnxIp.Cemi);
             this.cemi.getMessageCode.returns('L_Data.req');
@@ -529,6 +594,21 @@ describe('KnxIpDriver', function() {
             this.driver.emit('packet', ack);
 
             expect(eventSpy).to.be.calledOnce.and.to.be.calledWith(this.message);
+        });
+
+        it('logs message on logger', function() {
+            var expectedLogMsg = "Received Message from 1.10.4 to 1/2/3: 0";
+            var ack = new KnxIp.TunnelingAck(
+                this.tunnelingRequest.getChannelId(),
+                this.tunnelingRequest.getSequence()
+            );
+
+            expect(this.logger.verbose).not.to.be.called;
+
+            this.driver.emit('packet', this.tunnelingRequest);
+            this.driver.emit('packet', ack);
+
+            expect(this.logger.verbose).to.be.calledWith(expectedLogMsg);
         });
 
         it('does not trigger message event on repeated messages', function() {
