@@ -1,20 +1,11 @@
 function NullLogger () {
 }
 
-NullLogger.prototype.emergency = function(msg) {};
-
-NullLogger.prototype.alert = function(msg) {};
-
-NullLogger.prototype.critical = function(msg) {};
-
-NullLogger.prototype.error = function(msg) {};
-
-NullLogger.prototype.warning = function(msg) {};
-
-NullLogger.prototype.notice = function(msg) {};
-
-NullLogger.prototype.info = function(msg) {};
-
+NullLogger.prototype.silly = function(msg) {};
 NullLogger.prototype.debug = function(msg) {};
+NullLogger.prototype.verbose = function(msg) {};
+NullLogger.prototype.info = function(msg) {};
+NullLogger.prototype.warn = function(msg) {};
+NullLogger.prototype.error = function(msg) {};
 
 module.exports = NullLogger;
