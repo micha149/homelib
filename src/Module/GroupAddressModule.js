@@ -17,7 +17,7 @@ var _ = require("underscore"),
  *     });
  *
  * @constructor
- * @class Module.DaytimeModule
+ * @class Module.GroupAddressModule
  * @param {String} address Group address string like `1/2/3`
  * @param {String} type Datapoint type string like `1.001`
  * @param {Connection} connection
