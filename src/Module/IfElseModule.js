@@ -24,7 +24,10 @@ IfElseModule.prototype.start = function() {
         valueOutput = this._outputs.value;
 
     this._inputs.condition.subscribe(function(condition) {
-        if (condition === "On") {
+
+        condition = condition.toLowerCase ? condition.toLowerCase() : condition;
+
+        if (condition === "on") {
             elseInput.unsubscribe(valueOutput);
             ifInput.subscribe(valueOutput);
         } else {
