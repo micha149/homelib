@@ -2,7 +2,7 @@ var AbstractModule = require('./AbstractModule'),
     Datapoint = require('../Datapoint/Datapoint'),
     util = require('util');
 
-function ValueModule() {
+function IfElseModule() {
 
     this._outputs = {
         'value': Datapoint.create()
@@ -16,9 +16,9 @@ function ValueModule() {
 
     AbstractModule.apply(this, arguments);
 }
-util.inherits(ValueModule, AbstractModule);
+util.inherits(IfElseModule, AbstractModule);
 
-ValueModule.prototype.start = function() {
+IfElseModule.prototype.start = function() {
     var ifInput = this._inputs.if,
         elseInput = this._inputs.else,
         valueOutput = this._outputs.value;
@@ -34,4 +34,4 @@ ValueModule.prototype.start = function() {
     });
 };
 
-module.exports = ValueModule;
+module.exports = IfElseModule;
