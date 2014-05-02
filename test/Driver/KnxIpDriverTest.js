@@ -447,8 +447,10 @@ describe('KnxIpDriver', function() {
             this.cemi.getMessage.returns(this.message);
             this.cemi.toArray.returns([0x11, 0x00, 0xbc, 0xe0, 0x00, 0x00, 0x08, 0x02, 0x01, 0x00, 0x81]);
 
+            this.channelId = 123;
+
             var response  = sinon.createStubInstance(KnxIp.ConnectionResponse);
-            response.getChannelId.returns(123);
+            response.getChannelId.returns(this.channelId);
             response.getServiceName.returns('connection.response');
 
             this.driver.connect();
@@ -482,16 +484,31 @@ describe('KnxIpDriver', function() {
         it('calls callback if message was transmitted successfully', function() {
             var driver = this.driver,
                 ack = sinon.createStubInstance(KnxIp.TunnelingAck),
-                spy = sinon.spy();
+                spy = sinon.spy(),
+                sequence = 0,
+                expectedAck = new KnxIp.TunnelingAck(this.channelId, sequence, 0),
+                repitition = sinon.createStubInstance(KnxIp.TunnelingRequest),
+                repititionCemi = sinon.createStubInstance(KnxIp.Cemi);
 
             ack.getServiceName.returns('tunneling.ack');
+            ack.getSequence.returns(sequence);
+            ack.getChannelId.returns(this._channelId);
+            repitition.getServiceName.returns('tunneling.request');
+            repitition.getSequence.returns(sequence);
+            repitition.getChannelId.returns(this.channelId);
+            repitition.getCemi.returns(repititionCemi);
+            repititionCemi.getMessageCode.returns("L_Data.con");
+            repititionCemi.getMessage.returns(this.message);
 
             driver.send(this.message, spy);
 
             expect(spy).not.to.be.called;
             
             driver.emit('packet', ack);
+            expect(spy).not.to.be.called;
 
+            driver.emit('packet', repitition);
+            expect(driver._dataSocket).to.have.sent(expectedAck.toBuffer());
             expect(spy).to.be.calledOnce.and.calledOn(driver);
         });
 
@@ -501,6 +518,7 @@ describe('KnxIpDriver', function() {
                 ack = sinon.createStubInstance(KnxIp.TunnelingAck);
 
             ack.getServiceName.returns('tunneling.ack');
+            ack.getSequence.returns(0);
 
             driver.send(this.message);
 

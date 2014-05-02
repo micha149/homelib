@@ -23,6 +23,33 @@ function TunnelingAck(channelId, sequence, status) {
 util.inherits(TunnelingAck, Packet);
 
 /**
+ * Returns acked sequence number
+ *
+ * @returns {Number}
+ */
+TunnelingAck.prototype.getSequence = function() {
+    return this._data[2];
+};
+
+/**
+ * Returns targeted channel id
+ *
+ * @returns {Number}
+ */
+TunnelingAck.prototype.getChannelId = function() {
+    return this._data[1];
+};
+
+/**
+ * Returns status
+ *
+ * @returns {Number}
+ */
+TunnelingAck.prototype.getStatus = function() {
+    return this._data[3];
+};
+
+/**
  * Parses a given buffer and returns a TunnelingAck instance
  *
  * @param {buffer.Buffer} buffer

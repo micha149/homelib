@@ -64,6 +64,14 @@ function KnxIpDriver(options) {
     this._sequence = 0;
 
     /**
+     * Hash of sequence numbers and their tunneling requests
+     *
+     * @type {Object}
+     * @private
+     */
+    this._requests = {};
+
+    /**
      * Logger instance
      * @type {Log.LoggerInterface}
      * @private
@@ -121,29 +129,11 @@ KnxIpDriver.prototype.connect = function(callback) {
         self._createAndBindSocket.bind(self)
     ], function(err, sockets) {
 
-        var connectionRequest;
-
         self._connectionSocket = sockets[0];
         self._dataSocket = sockets[1];
 
-        connectionRequest = self._createConnectionRequest();
-
-        self._sendAndExpect(connectionRequest, 'connection.response', function(response) {
-
-            var endpoint = response.getEndpoint(),
-                logMsg = 'Connected to Knx/IP Interface';
-
-            if (endpoint) {
-                logMsg += " on " + endpoint.getAddress() + ":" + endpoint.getPort();
-            }
-
-            self._channelId = response.getChannelId();
-            self._sequence = 0;
-            self._status = STATUS_OPEN_IDLE;
-            self.emit('connected', response);
-            self._startHeartbeat();
-
-            self._logger.info(logMsg);
+        self._sendUntil(self._createConnectionRequest(), function() {
+            return self._status !== STATUS_CONNECTING;
         });
     });
 };
@@ -157,8 +147,8 @@ KnxIpDriver.prototype.disconnect = function() {
         endpoint = new KnxIp.Hpai(address.address, address.port),
         request = new KnxIp.DisconnectRequest(endpoint, this._channelId);
 
-    this._sendAndExpect(request,  'disconnect.response', function() {
-        self._status = STATUS_CLOSED;
+    this._sendUntil(request, function() {
+        return self._status === STATUS_CLOSED;
     });
 };
 
@@ -173,20 +163,25 @@ KnxIpDriver.prototype.isConnected = function() {
  * @inheritDoc Driver.DriverInterface
  */
 KnxIpDriver.prototype.send = function(message, callback) {
-    var self = this;
 
     if (this._status !== STATUS_OPEN_IDLE) {
         throw new Error('Can not send messages while driver is not connected');
     }
 
-    var cemi = new KnxIp.Cemi('L_Data.req', message),
-        request = new KnxIp.TunnelingRequest(this._channelId, this._sequence++, cemi);
+    var self     = this,
+        cemi     = new KnxIp.Cemi('L_Data.req', message),
+        sequence = this._sequence++,
+        request  = new KnxIp.TunnelingRequest(this._channelId, sequence, cemi);
 
-    this._sendAndExpect(request, 'tunneling.ack', function() {
-        this._logger.verbose("Send Message to " + message.getDestination() + ": " + message.getData());
-        if (callback) {
-            callback.call(self);
-        }
+    this._requests[sequence] = {
+        cemi: cemi,
+        callback: callback,
+        acked: false,
+        repeated: false
+    };
+
+    this._sendUntil(request, function() {
+        return self._requests[sequence].acked;
     });
 };
 
@@ -287,32 +282,93 @@ KnxIpDriver.prototype._onPacket = function(packet) {
     var self = this,
         cemi;
 
-    if (packet instanceof KnxIp.TunnelingRequest) {
+    switch (true) {
+        case packet instanceof KnxIp.TunnelingRequest:
 
-        cemi = packet.getCemi();
+            if (!this.isConnected() || packet.getChannelId() !== this._channelId) {
+                return;
+            }
 
-        this._socketSend(new KnxIp.TunnelingAck(
-            packet.getChannelId(),
-            packet.getSequence()
-        ));
+            cemi = packet.getCemi();
 
-        if(cemi && cemi.getMessageCode() !== "L_Data.con") {
-            this._confirmMessage(cemi, packet.getSequence(), function() {
-                var message = cemi.getMessage();
-                self._sequence = packet.getSequence() + 1;
-                self.emit('message', message);
-                self._logger.verbose("Received Message from " + message.getOrigin() + " to " + message.getDestination() + ": " + message.getData());
-            });
-        }
-    } else if (packet instanceof KnxIp.DisconnectRequest) {
+            this._socketSend(new KnxIp.TunnelingAck(
+                packet.getChannelId(),
+                packet.getSequence()
+            ));
 
-        this._socketSend(new KnxIp.DisconnectResponse(
-            packet.getChannelId(),
-            0
-        ));
+            if(cemi && cemi.getMessageCode() !== "L_Data.con") {
+                this._confirmMessage(cemi, packet.getSequence(), function() {
+                    var message = cemi.getMessage();
+                    self._sequence = packet.getSequence() + 1;
+                    self.emit('message', message);
+                    self._logger.verbose("Received Message from " + message.getOrigin() + " to " + message.getDestination() + ": " + message.getData());
+                });
+            } else {
+                this._requests[packet.getSequence()].repeated = true;
+                this._requests[packet.getSequence()].callback.call(this);
+            }
+            break;
+        case packet instanceof KnxIp.TunnelingAck:
+            this._onTunnelingAck(packet);
+            break;
+        case packet instanceof KnxIp.ConnectionResponse:
+            this._onConnectionResponse(packet);
+            break;
+        case packet instanceof KnxIp.DisconnectRequest:
+            this._socketSend(new KnxIp.DisconnectResponse(packet.getChannelId(), 0));
+        case packet instanceof KnxIp.DisconnectResponse:
+            this._status = STATUS_CLOSED;
+            this.emit('disconnect', packet);
+    }
+};
 
-        this._status = STATUS_CLOSED;
-        this.emit('disconnect', packet);
+/**
+ * Called when a connection response is received. This mehtod will set the current
+ * status and stores the received channelId. The sequence counter will be resetted to 0
+ * and heartbeat is started. After all a connected event is emitted and the received
+ * response packet is passed to the event listeners.
+ *
+ * @param {Driver.KnxIp.ConnectionResponse} response
+ * @fires connected
+ * @private
+ */
+KnxIpDriver.prototype._onConnectionResponse = function(response) {
+    var endpoint = response.getEndpoint(),
+        logMsg = 'Connected to Knx/IP Interface';
+
+    if (this._status === STATUS_OPEN_IDLE) {
+        return;
+    }
+
+    if (endpoint) {
+        logMsg += " on " + endpoint.getAddress() + ":" + endpoint.getPort();
+    }
+
+    this._channelId = response.getChannelId();
+    this._sequence = 0;
+    this._status = STATUS_OPEN_IDLE;
+    this.emit('connected', response);
+    this._startHeartbeat();
+
+    this._logger.info(logMsg);
+};
+
+/**
+ * Called when a tunneling ack is received.
+ *
+ * @param {Driver.KnxIp.TunnelingAck} packet
+ * @private
+ */
+KnxIpDriver.prototype._onTunnelingAck = function(packet) {
+
+    var requestData = this._requests[packet.getSequence()],
+        message = requestData.cemi.getMessage();
+
+    this._logger.verbose("Send Message to " + message.getDestination() + ": " + message.getData());
+    requestData.acked = true;
+
+    if (requestData.acked && requestData.repeated && requestData.callback) {
+        requestData.callback.call(this);
     }
 };
 
@@ -325,11 +381,21 @@ KnxIpDriver.prototype._onPacket = function(packet) {
  */
 KnxIpDriver.prototype._confirmMessage = function(original, sequence, callback) {
     var clone = KnxIp.Cemi.parse(original.toArray()),
-        request = new KnxIp.TunnelingRequest(this._channelId, sequence, clone);
+        request = new KnxIp.TunnelingRequest(this._channelId, sequence, clone),
+        requestData = {
+            cemi: clone,
+            callback: callback,
+            acked: false,
+            repeated: true
+        };
 
     clone.setMessageCode("L_Data.con");
 
-    this._sendAndExpect(request, 'tunneling.ack', callback);
+    this._requests[sequence] = requestData;
+
+    this._sendUntil(request, function() {
+        return requestData.acked;
+    });
 };
 
 /**
@@ -353,35 +419,27 @@ KnxIpDriver.prototype._createConnectionRequest = function() {
  * service is returned.
  *
  * @param {Driver.KnxIp.Packet} packet Packet to send
- * @param {String} exxpectedService Expected service name
- * @param {Function} callback Callback to be executed after the expected message was received
+ * @param {Function} validator Function that returns true if sending should stop
  * @private
  */
-KnxIpDriver.prototype._sendAndExpect = function(packet, expectedService, callback) {
+KnxIpDriver.prototype._sendUntil = function(packet, validator) {
     var self = this,
-        options = this._options,
-        repeatsLeft = options.maxRepeats,
+        repeatsLeft = this._options.maxRepeats,
         timeout;
 
     function checkMaxAttempsAndResend () {
+
+        if (validator()) {
+            return;
+        }
+
         self._socketSend(packet);
-        --repeatsLeft;
-        if (repeatsLeft > 0) {
+
+        if (--repeatsLeft > 0) {
             timeout = setTimeout(checkMaxAttempsAndResend, 1000);
         }
     }
 
-    function checkResponseAndKillTimeout (packet) {
-        if (packet.getServiceName() === expectedService) {
-            self.removeListener('packet', checkResponseAndKillTimeout);
-            clearTimeout(timeout);
-            if (callback) {
-                callback.call(self, packet);
-            }
-        }
-    }
-
-    this.on('packet', checkResponseAndKillTimeout);
     checkMaxAttempsAndResend();
 };
 
@@ -401,11 +459,11 @@ KnxIpDriver.prototype._startHeartbeat = function() {
 
     clearTimeout(this._heartbeatTimeout);
 
-    this._sendAndExpect(stateRequest, 'connectionstate.response', function(){
-        self._heartbeatTimeout = setTimeout(function() {
-            self._startHeartbeat();
-        }, 60000);
-    });
+    this._socketSend(stateRequest);
+
+    self._heartbeatTimeout = setTimeout(function() {
+        self._startHeartbeat();
+    }, 60000);
 };
 
 /**

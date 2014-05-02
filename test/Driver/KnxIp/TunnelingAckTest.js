@@ -1,58 +1,54 @@
-var assert = require('assert'),
+var expect = require('chai').expect,
     sinon  = require('sinon'),
     homelib = require('../../../homelib'),
     KnxIp  = homelib.Driver.KnxIp;
 
 describe("TunnelingAck", function() {
 
-    describe("constructor", function() {
-
-        it('extends KnxIp.Packet', function() {
-            var ack = new KnxIp.TunnelingAck(1, 2);
-            assert.ok(ack instanceof KnxIp.Packet, "expected instance");
-        });
-
-        it ('sets object properties', function() {
-            var channelId = 94,
-                sequence = 211,
-                status = 0x02,
-                ack = new KnxIp.TunnelingAck(channelId, sequence, status);
-
-            assert.equal(ack._data[1], channelId);
-            assert.equal(ack._data[2], sequence);
-            assert.equal(ack._data[3], status);
-        });
+    beforeEach(function() {
+        this.channelId = 94;
+        this.sequence = 211;
+        this.status = 0x02;
     });
 
-    describe('.toBuffer()', function() {
-        it('returns a buffer with the correct bytes', function() {
-            var channelId = 94,
-                sequence = 211,
-                status = 0x02,
-                expected = new Buffer([0x06, 0x10, 0x04, 0x21, 0x00, 0x0a, 0x04, channelId, sequence, status]),
-                ack = new KnxIp.TunnelingAck(channelId, sequence, status);
-
-            assert.deepEqual(ack.toBuffer(), expected);
-        });
+    it('extends KnxIp.Packet', function() {
+        var ack = new KnxIp.TunnelingAck(1, 2);
+        expect(ack).to.be.instanceOf(KnxIp.Packet);
     });
 
-    describe('.getServiceType()', function() {
-        it('returns correct service type', function() {
-            var ack = new KnxIp.TunnelingAck(1, 2);
-            assert.equal(ack.getServiceType(), 0x0421);
-        });
+    it('stores channelId', function() {
+        var ack = new KnxIp.TunnelingAck(this.channelId, this.sequence, this.status);
+        expect(ack.getChannelId()).to.be.equal(this.channelId);
     });
 
-});
+    it('stores sequence number', function() {
+        var ack = new KnxIp.TunnelingAck(this.channelId, this.sequence, this.status);
+        expect(ack.getSequence()).to.be.equal(this.sequence);
+    });
 
-describe("TunnelingAck.parse", function() {
-    it('returns TunnelingAck instance for given buffer', function() {
-        var channelId = 94,
-            sequence = 211,
-            status = 0x02,
-            buffer = new Buffer([0x06, 0x10, 0x04, 0x21, 0x00, 0x0a, 0x04, channelId, sequence, status]),
-            expected = new KnxIp.TunnelingAck(channelId, sequence, status);
+    it('stores status', function() {
+        var ack = new KnxIp.TunnelingAck(this.channelId, this.sequence, this.status);
+        expect(ack.getStatus()).to.be.equal(this.status);
+    });
 
-        assert.deepEqual(KnxIp.TunnelingAck.parse(buffer), expected);
+    it('returns a buffer with the correct bytes', function() {
+        var ack = new KnxIp.TunnelingAck(this.channelId, this.sequence, this.status);
+        expect(ack.toBuffer()).to.have.bytes([0x06, 0x10, 0x04, 0x21, 0x00, 0x0a, 0x04, this.channelId, this.sequence, this.status]);
+    });
+
+    it('returns correct service type', function() {
+        var ack = new KnxIp.TunnelingAck(1, 2);
+        expect(ack.getServiceType()).to.be.equal(0x0421);
+    });
+
+    describe(".parse()", function() {
+
+        it('returns TunnelingAck instance for given buffer', function() {
+            var buffer = new Buffer([0x06, 0x10, 0x04, 0x21, 0x00, 0x0a, 0x04, this.channelId, this.sequence, this.status]),
+                expected = new KnxIp.TunnelingAck(this.channelId, this.sequence, this.status);
+
+            expect(KnxIp.TunnelingAck.parse(buffer)).to.be.deep.equal(expected);
+        });
+
     });
 });
