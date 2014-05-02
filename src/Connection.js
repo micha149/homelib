@@ -1,4 +1,5 @@
 var Driver = require('./Driver/DriverInterface'),
+    Message = require('./Message'),
     invoke = require('underscore').invoke,
     assert = require('./assert');
 
@@ -13,12 +14,27 @@ var Driver = require('./Driver/DriverInterface'),
  */
 function Connection(driver) {
 
+    var self = this;
+
     assert.implements(driver, Driver);
 
     this._driver = driver;
     this._listeners = {};
+    this._readRequests = {};
 
-    driver.on('message', this._onDriverMessage.bind(this));
+    driver.on('message', function(message) {
+        switch(message.getCommand()) {
+            case "read":
+                self._onReadMessage(message);
+                break;
+            case "write":
+                self._onWriteMessage(message);
+                break;
+            case "answer":
+                self._onAnswerMessage(message);
+                break;
+        }
+    });
 }
 
 /**
@@ -28,10 +44,37 @@ function Connection(driver) {
  * @param {Message} message
  * @private
  */
-Connection.prototype._onDriverMessage = function(message) {
+Connection.prototype._onWriteMessage = function(message) {
 
     var rawAddress = message.getDestination().getRaw(),
         callbacks  = this._listeners[rawAddress];
+
+    if (callbacks) {
+        invoke(callbacks, "call", this, message);
+    }
+};
+
+/**
+ * Triggered when driver receives a read message. Currently I can't
+ * figure out any pattern to handle a read situation.
+ *
+ * @param {Message} message
+ * @private
+ */
+Connection.prototype._onReadMessage = function(message) {
+
+};
+
+/**
+ * Called when an answer message is received. It goes through read list
+ * an looks for any matching read request. Callbacks of matching reads are
+ * fired and requests are deleted.
+ *
+ * @param {Message} message
+ * @private
+ */
+Connection.prototype._onAnswerMessage = function(message) {
+    var callbacks = this._readRequests[message.getDestination()];
 
     if (callbacks) {
         invoke(callbacks, "call", this, message);
@@ -77,6 +120,22 @@ Connection.prototype.on = function (address, callback) {
 
     listeners[rawAddress] = listeners[rawAddress] || [];
     listeners[rawAddress].push(callback);
+};
+
+Connection.prototype.read = function(address, callback) {
+    var driver = this._driver,
+        msg = new Message();
+
+    msg.setCommand('read');
+    msg.setDestination(address);
+
+    if (this._readRequests[address]) {
+        this._readRequests[address].push(callback);
+        return;
+    }
+
+    this._readRequests[address] = [callback];
+    this.send(msg);
 };
 
 Connection.prototype.disconnect = function() {

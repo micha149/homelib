@@ -30,19 +30,6 @@ describe('Connection', function() {
                 connection = new Connection();
             }).to.Throw(Error);
         });
-
-        it('binds callback to drivers `message` event', function() {
-
-            var driver = sinon.createStubInstance(Driver),
-                connection;
-
-            sandbox.stub(Connection.prototype, '_onDriverMessage');
-            driver.on.withArgs('message').yields();
-
-            connection = new Connection(driver);
-
-            expect(connection._onDriverMessage).to.be.calledOnce;
-        });
         
     });
     
@@ -138,7 +125,7 @@ describe('Connection', function() {
             expect(driver.connect).not.to.be.called;
         });
 
-        it('calls listener if driver emits message',  function() {
+        it('calls listener if driver emits write message',  function() {
 
             var driver     = sinon.createStubInstance(Driver),
                 address    = sinon.createStubInstance(GroupAddress),
@@ -154,6 +141,7 @@ describe('Connection', function() {
 
             address.getRaw.returns(rawAddress);
             msg.getDestination.returns(address);
+            msg.getCommand.returns('write');
 
             connection.on(address, callback);
 
@@ -172,6 +160,7 @@ describe('Connection', function() {
                 callbackB   = sinon.spy(),
                 connection;
 
+            msg.getCommand.returns('write');
             driver.on.restore();
             driver.emit.restore();
 
@@ -187,6 +176,88 @@ describe('Connection', function() {
             expect(callbackA).to.be.calledOnce.and.calledWith(msg);
             expect(callbackB).to.be.calledOnce.and.calledWith(msg);
         });
+
+    });
+
+    describe("Reading from a group address", function() {
+
+        it('sends read message on driver', function() {
+            var driver     = sinon.createStubInstance(Driver),
+                address    = sinon.createStubInstance(GroupAddress),
+                spy        = sinon.spy(),
+                expected   = new Message(),
+                connection = new Connection(driver);
+
+            driver.isConnected.returns(true);
+
+            connection.read(address, spy);
+
+            expected.setCommand('read');
+            expected.setDestination(address);
+
+            expect(spy).not.to.be.called;
+            expect(driver.send).to.be.calledOnce.and.calledWith(expected);
+        });
+
+        it('calls callback when answer message is received', function() {
+            var driver     = sinon.createStubInstance(Driver),
+                address    = sinon.createStubInstance(GroupAddress),
+                spy        = sinon.spy(),
+                answer     = sinon.createStubInstance(Message),
+                connection;
+
+            driver.isConnected.returns(true);
+            driver.on.restore();
+            driver.emit.restore();
+
+            address.toString.returns('1/2/3');
+
+            answer.getCommand.returns('answer');
+            answer.getDestination.returns(address);
+
+            connection = new Connection(driver);
+
+            connection.read(address, spy);
+            driver.emit('message', answer);
+
+            expect(spy).to.be.called;
+        });
+
+        it('sends only on read message for multiple read requests', function() {
+            var driver     = sinon.createStubInstance(Driver),
+                address    = sinon.createStubInstance(GroupAddress),
+                spyOne     = sinon.spy(),
+                spyTwo     = sinon.spy(),
+                expected   = new Message(),
+                answer     = sinon.createStubInstance(Message),
+                connection;
+
+            driver.isConnected.returns(true);
+            driver.on.restore();
+            driver.emit.restore();
+
+            address.toString.returns('1/2/3');
+
+            expected.setCommand('read');
+            expected.setDestination(address);
+
+            answer.getCommand.returns('answer');
+            answer.getDestination.returns(address);
+
+            connection = new Connection(driver);
+
+            connection.read(address, spyOne);
+            expect(driver.send).to.be.calledOnce.and.calledWith(expected);
+
+            connection.read(address, spyTwo);
+            expect(driver.send).to.be.calledOnce;
+
+            driver.emit('message', answer);
+
+            expect(spyOne).to.be.called;
+            expect(spyTwo).to.be.called;
+        });
+
     });
 
     describe("Terminating a connection", function() {
