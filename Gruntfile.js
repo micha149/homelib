@@ -6,7 +6,8 @@ module.exports = function(grunt) {
 
         jshint: {
             options: {
-                expr: true
+                expr: true,
+                "-W086": true
             },
             all: ['Gruntfile.js', 'src/**/*.js', 'test/**/*.js']
         },
