@@ -265,7 +265,7 @@ KnxIpDriver.prototype._onSocketMessage = function(buffer) {
     } catch (e) {}
 
     if (packet) {
-        this._logger.debug('recv: ', packet);
+        this._logger.debug('recv: ', packet.toString());
         this.emit('packet', packet);
     }
 };
@@ -492,7 +492,7 @@ KnxIpDriver.prototype._socketSend = function(packet) {
         socket = this._connectionSocket;
     }
 
-    this._logger.debug('send: ', packet);
+    this._logger.debug('send: ', packet.toString());
 
     socket.send(buffer, 0, buffer.length, options.remotePort, options.remoteAddress);
 };
