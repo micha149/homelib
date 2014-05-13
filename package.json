@@ -10,7 +10,7 @@
     },
     "dependencies": {
         "async": "~0.8.0",
-        "suncalc": "^1.3.0",
+        "suncalc": "~1.4.0",
         "underscore": "~1.6.0"
     },
     "devDependencies": {
