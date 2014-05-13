@@ -639,6 +639,22 @@ describe('KnxIpDriver', function() {
 
             expect(eventSpy).not.to.be.called;
         });
+
+        it('logs warn message if unexpected confirmation was received', function() {
+            var expected,
+                self = this,
+                cemi = sinon.createStubInstance(KnxIp.Cemi);
+
+            this.tunnelingRequest.getCemi.returns(cemi);
+            cemi.getMessageCode.returns('L_Data.con');
+
+            sandbox.stub(KnxIp.Cemi, "parse").returns(cemi);
+
+            this.driver.emit('packet', this.tunnelingRequest);
+
+            expect(this.logger.warn).to.be.calledOnce.and.calledWith("Received confirmation message for sequence 49 but have no waiting request");
+        });
+
     });
 
     describe('receiving disconnect from remote', function() {

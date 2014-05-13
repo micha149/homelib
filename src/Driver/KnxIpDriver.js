@@ -304,8 +304,16 @@ KnxIpDriver.prototype._onPacket = function(packet) {
                     self._logger.verbose("Received Message from " + message.getOrigin() + " to " + message.getDestination() + ": " + message.getData());
                 });
             } else {
-                this._requests[packet.getSequence()].repeated = true;
-                this._requests[packet.getSequence()].callback.call(this);
+
+                if (this._requests[packet.getSequence()]) {
+                    this._requests[packet.getSequence()].repeated = true;
+                    this._requests[packet.getSequence()].callback.call(this);
+                } else {
+                    self._logger.warn(
+                        "Received confirmation message for sequence " + packet.getSequence() + " but have no waiting request",
+                        cemi.getMessage()
+                    );
+                }
             }
             break;
         case packet instanceof KnxIp.TunnelingAck:
