@@ -57,6 +57,25 @@ describe('Module.GroupAddressModule', function() {
             expect(this.connection.on).to.be.calledOnce.and.calledWith(this.groupAddress);
         });
 
+        it('reads current group vale from connection', function() {
+
+            var message = sinon.createStubInstance(homelib.Message),
+                expected = "down",
+                type = sinon.createStubInstance(homelib.Datapoint.BinaryType),
+                data = [1];
+
+            this.module.getOutput("value").getType.returns(type);
+            message.getData.returns(data);
+            type.transform.returns(expected);
+
+            this.connection.read.yields(message);
+
+            this.module.start();
+
+            expect(this.connection.read).to.be.calledOnce;
+            expect(this.module.getOutput('value').publish).to.be.calledWith(expected);
+        });
+
     });
 
     describe('receiving messages', function() {

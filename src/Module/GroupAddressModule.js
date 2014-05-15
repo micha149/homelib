@@ -46,6 +46,7 @@ GroupAddressModule.prototype.start = function() {
         connection = this._connection;
 
     connection.on(this._address, this._onMessage.bind(this));
+    connection.read(this._address, this._onMessage.bind(this));
 
     this._inputs.value.subscribe(function(value) {
         var msg = new Message(),
