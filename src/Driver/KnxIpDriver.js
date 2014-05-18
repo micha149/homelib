@@ -280,7 +280,7 @@ KnxIpDriver.prototype._onSocketMessage = function(buffer) {
 KnxIpDriver.prototype._onPacket = function(packet) {
 
     var self = this,
-        cemi;
+        cemi, request;
 
     switch (true) {
         case packet instanceof KnxIp.TunnelingRequest:
@@ -304,10 +304,10 @@ KnxIpDriver.prototype._onPacket = function(packet) {
                     self._logger.verbose("Received Message from " + message.getOrigin() + " to " + message.getDestination() + ": " + message.getData());
                 });
             } else {
-
-                if (this._requests[packet.getSequence()]) {
-                    this._requests[packet.getSequence()].repeated = true;
-                    this._requests[packet.getSequence()].callback.call(this);
+                request = this._requests[packet.getSequence()];
+                if (request) {
+                    request.repeated = true;
+                    request.callback && request.callback.call(this);
                 } else {
                     self._logger.warn(
                         "Received confirmation message for sequence " + packet.getSequence() + " but have no waiting request",
