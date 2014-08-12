@@ -12,6 +12,5 @@ module.exports = {
     Message: require(path + 'Message'),
     Module: require(path + 'Module'),
     Connection: require(path + 'Connection'),
-    Timer: require(path + 'Timer'),
-    assert: require(path + "assert")
+    Timer: require(path + 'Timer')
 };

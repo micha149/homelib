@@ -1,7 +1,7 @@
 var Driver = require('./Driver/DriverInterface'),
     Message = require('./Message'),
-    invoke = require('underscore').invoke,
-    assert = require('./assert');
+    impl  = require('implementjs'),
+    invoke = require('underscore').invoke;
 
 /**
  * The connection object represents an interface to the knx
@@ -16,7 +16,7 @@ function Connection(driver) {
 
     var self = this;
 
-    assert.implements(driver, Driver);
+    impl.implements(driver, Driver);
 
     this._driver = driver;
     this._listeners = {};

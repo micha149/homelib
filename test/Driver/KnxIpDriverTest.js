@@ -8,7 +8,7 @@ var Buffer = require('buffer').Buffer,
     chai    = require('chai'),
     assert = chai.assert,
     expect  = chai.expect,
-    implements = homelib.assert.implements;
+    implements = require('implementjs').implements;
 
 describe('KnxIpDriver', function() {
 
