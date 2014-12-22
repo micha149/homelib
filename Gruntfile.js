@@ -27,7 +27,7 @@ module.exports = function(grunt) {
                 },
                 src: ['test/**/*Test.js']
             },
-            coverage: {
+            "html-coverage": {
                 options: {
                     reporter: 'html-cov',
                     require: "test/setup.js",
@@ -35,6 +35,24 @@ module.exports = function(grunt) {
                     captureFile: 'coverage.html'
                 },
                 src: ['test/**/*Test.js']
+            },
+            "lcov-coverage": {
+                options: {
+                    reporter: 'mocha-lcov-reporter',
+                    require: "test/setup.js",
+                    quiet: true,
+                    captureFile: 'coverage.lcov'
+                },
+                src: ['test/**/*Test.js']
+            }
+        },
+
+        shell: {
+            options: {
+                stderr: false
+            },
+            "upload-coverage-report": {
+                command: './node_modules/.bin/codeclimate < coverage.lcov'
             }
         },
 
@@ -65,6 +83,7 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-contrib-clean');
     grunt.loadNpmTasks('grunt-mocha-test');
     grunt.loadNpmTasks('grunt-jsduck');
+    grunt.loadNpmTasks('grunt-shell');
 
     grunt.registerTask('instrument', 'Enalbles instrumentation of source files for code coverage', function() {
         require('blanket')({
@@ -75,7 +94,8 @@ module.exports = function(grunt) {
     // Default task(s).
     grunt.registerTask('default', 'Run jshint and unit tests', ['jshint', 'mochaTest:default']);
     grunt.registerTask('unit', 'Run unit tests only, but with verbose output', ['mochaTest:unitOnly']);
-    grunt.registerTask('coverage', 'Run tests and create code coverage', ['instrument', 'mochaTest:default', 'mochaTest:coverage']);
+    grunt.registerTask('coverage', 'Run tests and create code coverage', ['instrument', 'mochaTest:default', 'mochaTest:html-coverage']);
+    grunt.registerTask('travis', 'Task run by travis ci', ['jshint', 'instrument', 'mochaTest:default', 'mochaTest:lcov-coverage', 'shell:upload-coverage-report']);
     grunt.registerTask('docs', 'Create API documentation', ['jsduck']);
 
 };

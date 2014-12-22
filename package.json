@@ -1,38 +1,41 @@
 {
-    "name": "homelib",
-    "version": "0.1.0",
-    "author": "Michael van Engelshoven <michael@van-engelshoven.de>",
-    "description": "A home automation framework for knx/eib",
-    "contributors": [],
-    "repository": {
-        "type": "git",
-        "url": "https://github.com/micha149/homelib.git"
-    },
-    "dependencies": {
-        "async": "^0.8.0",
-        "implementjs": "^0.3.0",
-        "suncalc": "^1.4.0",
-        "underscore": "^1.6.0"
-    },
-    "devDependencies": {
-        "sinon": "1.9.0",
-        "mocha": "~1.18.2",
-        "chai": "~1.9.1",
-        "sinon-chai": "~2.5.0",
-        "grunt": "~0.4.4",
-        "grunt-contrib-jshint": "~0.9.2",
-        "grunt-mocha-test": "~0.10.0",
-        "grunt-jsduck": "~1.0.1",
-        "blanket": "~1.1.5",
-        "grunt-contrib-clean": "~0.5.0",
-        "grunt-contrib-watch": "~0.6.1"
-    },
-    "main": "./homelib.js",
-    "scripts": {
-        "test": "grunt"
-    },
-    "license": "MIT",
-    "engines": {
-        "node": ">=0.9.2"
-    }
+  "name": "homelib",
+  "version": "0.1.0",
+  "author": "Michael van Engelshoven <michael@van-engelshoven.de>",
+  "description": "A home automation framework for knx/eib",
+  "contributors": [],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/micha149/homelib.git"
+  },
+  "dependencies": {
+    "async": "^0.8.0",
+    "implementjs": "^0.3.0",
+    "suncalc": "^1.4.0",
+    "underscore": "^1.6.0"
+  },
+  "devDependencies": {
+    "blanket": "~1.1.5",
+    "chai": "~1.9.1",
+    "codeclimate-test-reporter": "0.0.4",
+    "grunt": "~0.4.4",
+    "grunt-contrib-clean": "~0.5.0",
+    "grunt-contrib-jshint": "~0.9.2",
+    "grunt-contrib-watch": "~0.6.1",
+    "grunt-jsduck": "~1.0.1",
+    "grunt-mocha-test": "~0.10.0",
+    "grunt-shell": "^1.1.1",
+    "mocha": "~1.18.2",
+    "mocha-lcov-reporter": "0.0.1",
+    "sinon": "1.9.0",
+    "sinon-chai": "~2.5.0"
+  },
+  "main": "./homelib.js",
+  "scripts": {
+    "test": "grunt"
+  },
+  "license": "MIT",
+  "engines": {
+    "node": ">=0.9.2"
+  }
 }

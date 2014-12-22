@@ -1,5 +1,9 @@
 language: node_js
 node_js:
-  - "0.10"
+- '0.10'
 before_script:
-  - npm install -g grunt-cli
+- npm install -g grunt-cli
+script: "grunt travis"
+env:
+  global:
+    secure: X4UaHLMI8Z+HyOAtSzC9vz40rUL8ySEo+TKZs3diy7t3HgYNwTZ7oyTLSvYY+Jyumf85mFQhjJx+AwhUKOkgCW3JLzjZbQ1eFAHfxtpHDkFr6zvhuDwfM3LaivAOD3l8fMknMdkGtWhJVbANtmOOs+5f0RamQJX7m3t6y7n6zEI=
