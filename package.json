@@ -1,4 +1,5 @@
 {
+
   "name": "homelib",
   "version": "0.1.0",
   "author": "Michael van Engelshoven <michael@van-engelshoven.de>",
@@ -9,7 +10,7 @@
     "url": "https://github.com/micha149/homelib.git"
   },
   "dependencies": {
-    "async": "^0.8.0",
+    "async": "^0.9.0",
     "implementjs": "^0.3.0",
     "suncalc": "^1.4.0",
     "underscore": "^1.6.0"
