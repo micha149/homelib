@@ -3,6 +3,8 @@ var Driver = require('./Driver/DriverInterface'),
     impl  = require('implementjs'),
     invoke = require('underscore').invoke;
 
+module.exports = Connection;
+
 /**
  * The connection object represents an interface to the knx
  * bus. It needs a specific driver instance for the used
@@ -122,9 +124,19 @@ Connection.prototype.on = function (address, callback) {
     listeners[rawAddress].push(callback);
 };
 
+/**
+ * Reads data from the bus.
+ *
+ * Technically, this method stores the given callback and sends a mesage
+ * with "read" command to the bus. When a message with "answer" command and
+ * the same address is received, all stored callbacks are fired. Handling of
+ * answer messages is implemented in #_onAnswerMessage.
+ *
+ * @param address
+ * @param callback
+ */
 Connection.prototype.read = function(address, callback) {
-    var driver = this._driver,
-        msg = new Message();
+    var msg = new Message();
 
     msg.setCommand('read');
     msg.setDestination(address);
@@ -156,11 +168,12 @@ Connection.prototype.write = function(address, data, callback) {
     this.send(msg, callback);
 };
 
+/**
+ * Disconnects the driver when connected.
+ */
 Connection.prototype.disconnect = function() {
     var driver = this._driver;
     if (driver.isConnected()) {
         driver.disconnect();
     }
 };
-
-module.exports = Connection;
