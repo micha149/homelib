@@ -9,10 +9,10 @@
         "url": "https://github.com/micha149/homelib.git"
     },
     "dependencies": {
-        "async": "~0.8.0",
-        "implementjs": "~0.3.0",
-        "suncalc": "~1.4.0",
-        "underscore": "~1.6.0"
+        "async": "^0.8.0",
+        "implementjs": "^0.3.0",
+        "suncalc": "^1.4.0",
+        "underscore": "^1.6.0"
     },
     "devDependencies": {
         "sinon": "1.9.0",
