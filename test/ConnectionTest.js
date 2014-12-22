@@ -260,6 +260,45 @@ describe('Connection', function() {
 
     });
 
+    describe("Shorthand for writing on bus", function() {
+
+        it("sends write message on driver", function() {
+            var driver     = sinon.createStubInstance(Driver),
+                address    = sinon.createStubInstance(GroupAddress),
+                spy        = sinon.spy(),
+                expected   = new Message(),
+                expectedData = [1, 4, 9],
+                connection = new Connection(driver);
+
+            driver.isConnected.returns(true);
+
+            connection.write(address, expectedData, spy);
+
+            expected.setCommand('write');
+            expected.setDestination(address);
+            expected.setData(expectedData);
+
+            expect(driver.send).to.be.calledOnce.and.calledWith(expected);
+            expect(spy).not.to.be.called;
+        });
+
+        it("calls given callback when driver has sent message", function() {
+            var driver     = sinon.createStubInstance(Driver),
+                address    = sinon.createStubInstance(GroupAddress),
+                spy        = sinon.spy(),
+                connection = new Connection(driver);
+
+            driver.isConnected.returns(true);
+            driver.send.yields();
+
+            connection.write(address, [0], spy);
+
+            expect(driver.send).to.be.calledOnce;
+            expect(spy).to.be.called;
+        });
+
+    });
+
     describe("Terminating a connection", function() {
 
         it('calls disconect() on driver', function() {

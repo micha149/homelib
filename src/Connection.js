@@ -138,6 +138,24 @@ Connection.prototype.read = function(address, callback) {
     this.send(msg);
 };
 
+/**
+ * Sends write message with the given data to the given address. This method is a shorthand
+ * for creating ans Message instance, set its command to "write" and sending it to the bus.
+ *
+ * @param {GroupAddress} address
+ * @param {array} data
+ * @param {Function} callback
+ */
+Connection.prototype.write = function(address, data, callback) {
+    var msg = new Message();
+
+    msg.setCommand('write');
+    msg.setDestination(address);
+    msg.setData(data);
+
+    this.send(msg, callback);
+};
+
 Connection.prototype.disconnect = function() {
     var driver = this._driver;
     if (driver.isConnected()) {
