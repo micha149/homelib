@@ -130,7 +130,7 @@ describe('Connection', function() {
             var driver     = sinon.createStubInstance(Driver),
                 address    = sinon.createStubInstance(GroupAddress),
                 msg        = sinon.createStubInstance(Message),
-                rawAddress = [0x22, 0x9b],
+                numAddress = 2563,
                 callback   = sinon.spy(),
                 connection;
 
@@ -139,7 +139,7 @@ describe('Connection', function() {
 
             connection = new Connection(driver);
 
-            address.getRaw.returns(rawAddress);
+            address.getNumber.returns(numAddress);
             msg.getDestination.returns(address);
             msg.getCommand.returns('write');
 
@@ -155,7 +155,7 @@ describe('Connection', function() {
             var driver     = sinon.createStubInstance(Driver),
                 address    = sinon.createStubInstance(GroupAddress),
                 msg        = sinon.createStubInstance(Message),
-                rawAddress = [0x22, 0x9b],
+                numAddress = 8859,
                 callbackA   = sinon.spy(),
                 callbackB   = sinon.spy(),
                 connection;
@@ -166,7 +166,7 @@ describe('Connection', function() {
 
             connection = new Connection(driver);
 
-            address.getRaw.returns(rawAddress);
+            address.getNumber.returns(numAddress);
             msg.getDestination.returns(address);
 
             connection.on(address, callbackA);
@@ -193,11 +193,11 @@ describe('Connection', function() {
 
             this.createGroupAddress = function() {
                 var address = sinon.createStubInstance(GroupAddress);
-                address.getRaw.returns([0x22, addressCounter++]);
+                address.getNumber.returns(addressCounter++);
                 return address;
-            }
+            };
 
-        })
+        });
 
         it("removes all listeners for a given address", function() {
             var callbackA = sinon.spy(),
@@ -239,7 +239,7 @@ describe('Connection', function() {
 
             expect(callbackA).not.to.to.be.called;
             expect(callbackB).to.to.be.called;
-        })
+        });
 
     });
 

@@ -49,7 +49,7 @@ function Connection(driver) {
  */
 Connection.prototype._onWriteMessage = function(message) {
 
-    var rawAddress = message.getDestination().getRaw(),
+    var rawAddress = message.getDestination().getNumber(),
         callbacks  = this._listeners[rawAddress];
 
     if (callbacks) {
@@ -115,7 +115,7 @@ Connection.prototype.send = function(msg, callback) {
 Connection.prototype.on = function (address, callback) {
     var driver     = this._driver,
         listeners  = this._listeners,
-        rawAddress = address.getRaw();
+        rawAddress = address.getNumber();
 
     if (!driver.isConnected()) {
         driver.connect();
@@ -134,7 +134,7 @@ Connection.prototype.on = function (address, callback) {
  */
 Connection.prototype.off = function(address, callback) {
     var listeners = this._listeners,
-        rawAddress = address.getRaw();
+        rawAddress = address.getNumber();
 
     if (!callback) {
         listeners[rawAddress] = [];
