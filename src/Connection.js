@@ -1,7 +1,8 @@
 var Driver = require('./Driver/DriverInterface'),
     Message = require('./Message'),
     impl  = require('implementjs'),
-    invoke = require('underscore').invoke;
+    invoke = require('underscore').invoke,
+    without = require('underscore').without;
 
 module.exports = Connection;
 
@@ -122,6 +123,25 @@ Connection.prototype.on = function (address, callback) {
 
     listeners[rawAddress] = listeners[rawAddress] || [];
     listeners[rawAddress].push(callback);
+};
+
+/**
+ * Removes listeners for the given address. If a callback funciton is given, only
+ * the listener with this function is removed.
+ *
+ * @param {GroupAddress} address
+ * @param {Function} [callback]
+ */
+Connection.prototype.off = function(address, callback) {
+    var listeners = this._listeners,
+        rawAddress = address.getRaw();
+
+    if (!callback) {
+        listeners[rawAddress] = [];
+        return;
+    }
+
+    listeners[rawAddress] = without(listeners[rawAddress], callback);
 };
 
 /**

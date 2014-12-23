@@ -179,6 +179,70 @@ describe('Connection', function() {
 
     });
 
+    describe("Removing listeners", function() {
+
+
+
+        beforeEach(function() {
+
+            var addressCounter = 1;
+
+            this.driver = sinon.createStubInstance(Driver);
+            this.driver.on.restore();
+            this.driver.emit.restore();
+
+            this.createGroupAddress = function() {
+                var address = sinon.createStubInstance(GroupAddress);
+                address.getRaw.returns([0x22, addressCounter++]);
+                return address;
+            }
+
+        })
+
+        it("removes all listeners for a given address", function() {
+            var callbackA = sinon.spy(),
+                callbackB = sinon.spy(),
+                address = this.createGroupAddress(),
+                connection = new Connection(this.driver),
+                msg = sinon.createStubInstance(Message);
+
+            msg.getCommand.returns('write');
+            msg.getDestination.returns(address);
+
+            connection.on(address, callbackA);
+            connection.on(address, callbackB);
+
+            connection.off(address);
+
+            this.driver.emit("message", msg);
+
+            expect(callbackA).not.to.to.be.called;
+            expect(callbackB).not.to.to.be.called;
+        });
+
+        it('removes listeners for a given callback', function() {
+            var callbackA = sinon.spy(),
+                callbackB = sinon.spy(),
+                address = this.createGroupAddress(),
+                connection = new Connection(this.driver),
+                msg = sinon.createStubInstance(Message);
+
+            msg.getCommand.returns('write');
+            msg.getDestination.returns(address);
+
+            connection.on(address, callbackA);
+            connection.on(address, callbackB);
+
+            connection.off(address, callbackA);
+
+            this.driver.emit("message", msg);
+
+            expect(callbackA).not.to.to.be.called;
+            expect(callbackB).to.to.be.called;
+        })
+
+    });
+
     describe("Reading from a group address", function() {
 
         it('sends read message on driver', function() {
